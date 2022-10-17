@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <changeSet author="vladimir (generated)" id="1666028171321-1">
+        <createSequence sequenceName="authors_id_seq"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-2">
+        <createSequence sequenceName="authors_id_seq1"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-3">
+        <createSequence sequenceName="balance_transaction_id_seq"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-4">
+        <createSequence sequenceName="balance_transaction_id_seq1"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-5">
+        <createSequence sequenceName="book2author_id_seq"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-6">
+        <createSequence sequenceName="book2author_id_seq1"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-7">
+        <createSequence sequenceName="book2genre_id_seq"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-8">
+        <createSequence sequenceName="book2genre_id_seq1"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-9">
+        <createSequence sequenceName="book2user_id_seq"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-10">
+        <createSequence sequenceName="book2user_id_seq1"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-11">
+        <createSequence sequenceName="book2user_type_id_seq"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-12">
+        <createSequence sequenceName="book2user_type_id_seq1"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-13">
+        <createSequence sequenceName="book_file_type_id_seq"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-14">
+        <createSequence sequenceName="book_file_type_id_seq1"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-15">
+        <createSequence sequenceName="book_review_id_seq"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-16">
+        <createSequence sequenceName="book_review_id_seq1"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-17">
+        <createSequence sequenceName="book_review_like_id_seq"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-18">
+        <createSequence sequenceName="book_review_like_id_seq1"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-19">
+        <createSequence sequenceName="books_id_seq"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-20">
+        <createSequence sequenceName="books_id_seq1"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-21">
+        <createSequence sequenceName="document_id_seq"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-22">
+        <createSequence sequenceName="document_id_seq1"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-23">
+        <createSequence sequenceName="faq_id_seq"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-24">
+        <createSequence sequenceName="faq_id_seq1"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-25">
+        <createSequence sequenceName="file_download_id_seq"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-26">
+        <createSequence sequenceName="file_download_id_seq1"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-27">
+        <createSequence sequenceName="genre_id_seq"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-28">
+        <createSequence sequenceName="genre_id_seq1"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-29">
+        <createSequence sequenceName="hibernate_sequence"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-30">
+        <createSequence sequenceName="message_id_seq"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-31">
+        <createSequence sequenceName="message_id_seq1"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-32">
+        <createSequence sequenceName="test_entities_id_seq"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-33">
+        <createSequence sequenceName="test_entities_id_seq1"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-34">
+        <createSequence sequenceName="user_contact_id_seq"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-35">
+        <createSequence sequenceName="user_contact_id_seq1"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-36">
+        <createSequence sequenceName="users_id_seq"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-37">
+        <createSequence sequenceName="users_id_seq1"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-38">
+        <createTable tableName="authors">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="authors_pkey"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="photo" type="VARCHAR(255)"/>
+            <column name="slug" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-39">
+        <createTable tableName="balance_transaction">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="balance_transaction_pkey"/>
+            </column>
+            <column name="description" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="time" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="value" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="book_id" type="INT"/>
+            <column name="user_id" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-40">
+        <createTable tableName="book2author">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="book2author_pkey"/>
+            </column>
+            <column defaultValueNumeric="0" name="sort_index" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author_id" type="INT"/>
+            <column name="book_id" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-41">
+        <createTable tableName="book2genre">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="book2genre_pkey"/>
+            </column>
+            <column name="book_id" type="INT"/>
+            <column name="genre_id" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-42">
+        <createTable tableName="book2user">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="book2user_pkey"/>
+            </column>
+            <column name="time" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="book_id" type="INT"/>
+            <column name="iser_id" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-43">
+        <createTable tableName="book2user_type">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="book2user_type_pkey"/>
+            </column>
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-44">
+        <createTable tableName="book_file_type">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="book_file_type_pkey"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-45">
+        <createTable tableName="book_review">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="book_review_pkey"/>
+            </column>
+            <column name="text" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="time" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="book_id" type="INT"/>
+            <column name="iser_id" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-46">
+        <createTable tableName="book_review_like">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="book_review_like_pkey"/>
+            </column>
+            <column name="time" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="review_id" type="INT"/>
+            <column name="iser_id" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-47">
+        <createTable tableName="books">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="books_pkey"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column defaultValueNumeric="0" name="discount" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="image" type="VARCHAR(255)"/>
+            <column name="is_bestseller" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pub_date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="slug" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-48">
+        <createTable tableName="document">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="document_pkey"/>
+            </column>
+            <column name="slug" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="sort_index" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="text" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-49">
+        <createTable tableName="faq">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="faq_pkey"/>
+            </column>
+            <column name="answer" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="sort_index" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-50">
+        <createTable tableName="file_download">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="file_download_pkey"/>
+            </column>
+            <column defaultValueNumeric="1" name="count" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="book_id" type="INT"/>
+            <column name="iser_id" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-51">
+        <createTable tableName="genre">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="genre_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parent_id" type="INT"/>
+            <column name="slug" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-52">
+        <createTable tableName="message">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="message_pkey"/>
+            </column>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="subject" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="text" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="time" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="iser_id" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-53">
+        <createTable tableName="test_entities">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="test_entities_pkey"/>
+            </column>
+            <column name="data" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-54">
+        <createTable tableName="user_contact">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="user_contact_pkey"/>
+            </column>
+            <column name="approved" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code_time" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code_trails" type="INT"/>
+            <column name="contact" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="INT"/>
+            <column name="iser_id" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-55">
+        <createTable tableName="users">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="users_pkey"/>
+            </column>
+            <column name="balance" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="hash" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reg_time" type="date">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-56">
+        <addForeignKeyConstraint baseColumnNames="author_id" baseTableName="book2author" constraintName="fk3hyom3yo5q6nfo9ytqofqil37" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="authors"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-57">
+        <addForeignKeyConstraint baseColumnNames="iser_id" baseTableName="file_download" constraintName="fk6ugkdodcxg4v1ixg49vaqxdo8" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="users"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-58">
+        <addForeignKeyConstraint baseColumnNames="book_id" baseTableName="book2author" constraintName="fk8joa8tens71ol1st4fd9hssph" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="books"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-59">
+        <addForeignKeyConstraint baseColumnNames="iser_id" baseTableName="book_review_like" constraintName="fk9w80689k4bivwk2g3gk7o40op" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="users"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-60">
+        <addForeignKeyConstraint baseColumnNames="book_id" baseTableName="book2genre" constraintName="fkceqa97sssb6d5xg7n8jtt5gqb" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="books"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-61">
+        <addForeignKeyConstraint baseColumnNames="book_id" baseTableName="book2user" constraintName="fkd80i5quc7o0xb1d1k8ppqmtsu" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="books"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-62">
+        <addForeignKeyConstraint baseColumnNames="iser_id" baseTableName="user_contact" constraintName="fkdrdsxabms1csmsgd0mss5ok2b" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="users"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-63">
+        <addForeignKeyConstraint baseColumnNames="book_id" baseTableName="balance_transaction" constraintName="fke2aw1i7lhjey4rskq9qhed9qs" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="books"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-64">
+        <addForeignKeyConstraint baseColumnNames="book_id" baseTableName="book_review" constraintName="fkgme5o68sylsmw5hw0ys2x8iw8" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="books"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-65">
+        <addForeignKeyConstraint baseColumnNames="iser_id" baseTableName="book2user" constraintName="fkiuwbbqccrhv2xrq9soxqy74yk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="users"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-66">
+        <addForeignKeyConstraint baseColumnNames="genre_id" baseTableName="book2genre" constraintName="fkkdc8kcprnkl4ygg2f0v9588wi" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="genre"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-67">
+        <addForeignKeyConstraint baseColumnNames="review_id" baseTableName="book_review_like" constraintName="fkl5konyr7ye2i76wv92vf9w6y2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="book_review"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-68">
+        <addForeignKeyConstraint baseColumnNames="iser_id" baseTableName="book_review" constraintName="fkn14gwrsv0jevoesp1ul4f1rqb" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="users"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-69">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="balance_transaction" constraintName="fkndi1dijwreoyd8stngrabtx8m" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="users"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-70">
+        <addForeignKeyConstraint baseColumnNames="iser_id" baseTableName="message" constraintName="fkpr77ts88yvhucd0j7epcw5uag" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="users"/>
+    </changeSet>
+    <changeSet author="vladimir (generated)" id="1666028171321-71">
+        <addForeignKeyConstraint baseColumnNames="book_id" baseTableName="file_download" constraintName="fkswtliibr0mrua60wbmecwlfyo" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="books"/>
+    </changeSet>
+</databaseChangeLog>
