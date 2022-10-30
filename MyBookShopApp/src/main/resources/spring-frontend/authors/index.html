@@ -33,7 +33,7 @@
                         <h2 class="Authors-title" th:id="${autorsList.getKey()}" th:text="${autorsList.getKey()}" >А
                         </h2>
                         <div class="Authors-letter" >
-                            <div class="Authors-item" th:each="autors : ${autorsList.getValue()}"><a href="/authors/slug.html" th:text="${autors.firstName + ' ' + autors.lastName}">Абгарян Наринэ</a>
+                            <div class="Authors-item" th:each="autors : ${autorsList.getValue()}"><a th:href="@{'/authors/' + ${autors.getSlug()}}" th:text="${autors.getName()}">Абгарян Наринэ</a>
                             </div>
                         </div>
                     </div>

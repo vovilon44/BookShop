@@ -1,12 +1,10 @@
 package com.example.MyBookShopApp.data.struct.book.links;
 
-import com.example.MyBookShopApp.data.Author;
 import com.example.MyBookShopApp.data.Book;
 import com.example.MyBookShopApp.data.struct.user.UserEntity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "book2user")
@@ -27,7 +25,7 @@ public class Book2UserEntity {
     private Book book;
 
     @ManyToOne
-    @JoinColumn(name = "iser_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity user;
 
     public int getId() {

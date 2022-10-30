@@ -25,7 +25,7 @@ public class Author {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-
+    @Transient
     @OneToMany(mappedBy = "author")
     private List<Book2AuthorEntity> book2AuthorEntityList = new ArrayList<>();
 
@@ -75,5 +75,17 @@ public class Author {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "Author{" +
+                "id=" + id +
+                ", photo='" + photo + '\'' +
+                ", slug='" + slug + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", book2AuthorEntityList=" + book2AuthorEntityList +
+                '}';
     }
 }

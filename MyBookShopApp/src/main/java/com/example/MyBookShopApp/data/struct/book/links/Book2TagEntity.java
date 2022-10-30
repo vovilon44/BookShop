@@ -1,13 +1,13 @@
 package com.example.MyBookShopApp.data.struct.book.links;
 
 import com.example.MyBookShopApp.data.Book;
-import com.example.MyBookShopApp.data.struct.genre.GenreEntity;
+import com.example.MyBookShopApp.data.struct.tag.TagEntity;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "book2genre")
-public class Book2GenreEntity {
+@Table(name = "book2tag")
+public class Book2TagEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,8 +18,8 @@ public class Book2GenreEntity {
     private Book book;
 
     @ManyToOne
-    @JoinColumn(name = "genre_id", referencedColumnName = "id")
-    private GenreEntity genre;
+    @JoinColumn(name = "tag_id", referencedColumnName = "id")
+    private TagEntity tag;
 
     public int getId() {
         return id;
@@ -37,11 +37,11 @@ public class Book2GenreEntity {
         this.book = book;
     }
 
-    public GenreEntity getGenre() {
-        return genre;
+    public TagEntity getTag() {
+        return tag;
     }
 
-    public void setGenre(GenreEntity genre) {
-        this.genre = genre;
+    public void setTag(TagEntity tag) {
+        this.tag = tag;
     }
 }

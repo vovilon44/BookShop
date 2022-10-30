@@ -1,28 +1,22 @@
 package com.example.MyBookShopApp.config;
 
-import com.example.MyBookShopApp.data.Book;
 import com.example.MyBookShopApp.data.BookRepository;
 import com.example.MyBookShopApp.data.TestEntity;
-import org.aspectj.weaver.ast.Test;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Configuration;
 
-import javax.persistence.Entity;
 import javax.persistence.EntityManagerFactory;
-import java.util.logging.Logger;
 
-@Configuration
+//@Configuration
 public class CommandLineRunnerImpl  implements CommandLineRunner {
 
     EntityManagerFactory entityManagerFactory;
     BookRepository bookRepository;
 
 
-    @Autowired
+//    @Autowired
     public CommandLineRunnerImpl(EntityManagerFactory entityManagerFactory, BookRepository bookRepository) {
         this.entityManagerFactory = entityManagerFactory;
         this.bookRepository = bookRepository;

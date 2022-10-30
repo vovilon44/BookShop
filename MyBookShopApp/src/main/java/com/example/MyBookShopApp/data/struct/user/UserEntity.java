@@ -28,28 +28,34 @@ public class UserEntity {
     private LocalDate regTime;
 
     @Column(columnDefinition = "INT NOT NULL")
-    private int balance;
+    private double balance;
 
     @Column(columnDefinition = "VARCHAR(255) NOT NULL")
     private String name;
 
+    @Transient
     @OneToMany(mappedBy = "user")
     private List<Book2UserEntity> book2UserEntityList = new ArrayList<>();
+    @Transient
     @OneToMany(mappedBy = "user")
     private List<FileDownloadEntity> fileDownloadEntityList = new ArrayList<>();
 
+    @Transient
     @OneToMany(mappedBy = "user")
     private List<BalanceTransactionEntity> balanceTransactionEntityList = new ArrayList<>();
-
+    @Transient
     @OneToMany(mappedBy = "user")
     private List<BookReviewEntity> bookReviewEntityList = new ArrayList<>();
 
+    @Transient
     @OneToMany(mappedBy = "user")
     private List<MessageEntity> messageEntityList = new ArrayList<>();
 
+    @Transient
     @OneToMany(mappedBy = "user")
     private List<BookReviewLikeEntity> bookReviewLikeEntityList = new ArrayList<>();
 
+    @Transient
     @OneToMany(mappedBy = "user")
     private List<UserContactEntity> userContactEntityList = new ArrayList<>();
 
@@ -78,12 +84,20 @@ public class UserEntity {
         this.regTime = regTime;
     }
 
-    public int getBalance() {
+    public double getBalance() {
         return balance;
     }
 
-    public void setBalance(int balance) {
+    public void setBalance(double balance) {
         this.balance = balance;
+    }
+
+    public List<UserContactEntity> getUserContactEntityList() {
+        return userContactEntityList;
+    }
+
+    public void setUserContactEntityList(List<UserContactEntity> userContactEntityList) {
+        this.userContactEntityList = userContactEntityList;
     }
 
     public String getName() {

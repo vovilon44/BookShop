@@ -5,11 +5,11 @@ import com.example.MyBookShopApp.data.struct.book.links.Book2AuthorEntity;
 import com.example.MyBookShopApp.data.struct.book.links.Book2GenreEntity;
 import com.example.MyBookShopApp.data.struct.book.links.Book2UserEntity;
 import com.example.MyBookShopApp.data.struct.book.review.BookReviewEntity;
-import com.example.MyBookShopApp.data.struct.genre.GenreEntity;
 import com.example.MyBookShopApp.data.struct.payments.BalanceTransactionEntity;
+import com.example.MyBookShopApp.data.struct.tag.TagEntity;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +20,8 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(columnDefinition = "DATE NOT NULL")
-    private LocalDate pubDate;
+
+    private Date pubDate;
     @Column(columnDefinition = "SMALLINT NOT NULL")
     private int isBestseller;
     @Column(columnDefinition = "VARCHAR(255) NOT NULL")
@@ -33,22 +33,36 @@ public class Book {
     private String description;
     @Column(columnDefinition = "INT NOT NULL")
     private Integer price;
-    @Column(columnDefinition = "SMALLINT NOT NULL DEFAULT 0")
-    private int discount;
+    @Column(columnDefinition = "NUMERIC NOT NULL DEFAULT 0")
+    private double discount;
+
+    @Transient
     @OneToMany(mappedBy = "book")
     private List<Book2AuthorEntity> book2AuthorEntityList = new ArrayList<>();
-
+    @Transient
     @OneToMany(mappedBy = "book")
     private List<Book2GenreEntity> book2GenreEntityList = new ArrayList<>();
+    @Transient
     @OneToMany(mappedBy = "book")
     private List<Book2UserEntity> book2UserEntityList = new ArrayList<>();
+    @Transient
     @OneToMany(mappedBy = "book")
     private List<FileDownloadEntity> fileDownloadEntityList = new ArrayList<>();
+    @Transient
     @OneToMany(mappedBy = "book")
     private List<BalanceTransactionEntity> balanceTransactionEntityList = new ArrayList<>();
-
+    @Transient
     @OneToMany(mappedBy = "book")
     private List<BookReviewEntity> bookReviewEntityList = new ArrayList<>();
+
+    @Transient
+    private String author;
+
+    @Transient
+    private double rating;
+
+    @Transient
+    private List<TagEntity> tags;
 
     public Integer getId() {
         return id;
@@ -75,11 +89,11 @@ public class Book {
         this.book2GenreEntityList = book2GenreEntityList;
     }
 
-    public LocalDate getPubDate() {
+    public Date getPubDate() {
         return pubDate;
     }
 
-    public void setPubDate(LocalDate pubDate) {
+    public void setPubDate(Date pubDate) {
         this.pubDate = pubDate;
     }
 
@@ -131,11 +145,11 @@ public class Book {
         this.price = price;
     }
 
-    public int getDiscount() {
+    public double getDiscount() {
         return discount;
     }
 
-    public void setDiscount(int discount) {
+    public void setDiscount(double discount) {
         this.discount = discount;
     }
 
@@ -169,5 +183,53 @@ public class Book {
 
     public void setBookReviewEntityList(List<BookReviewEntity> bookReviewEntityList) {
         this.bookReviewEntityList = bookReviewEntityList;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public List<TagEntity> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<TagEntity> tags) {
+        this.tags = tags;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id=" + id +
+                ", pubDate=" + pubDate +
+                ", isBestseller=" + isBestseller +
+                ", slug='" + slug + '\'' +
+                ", title='" + title + '\'' +
+                ", image='" + image + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", discount=" + discount +
+                ", book2AuthorEntityList=" + book2AuthorEntityList +
+                ", book2GenreEntityList=" + book2GenreEntityList +
+                ", book2UserEntityList=" + book2UserEntityList +
+                ", fileDownloadEntityList=" + fileDownloadEntityList +
+                ", balanceTransactionEntityList=" + balanceTransactionEntityList +
+                ", bookReviewEntityList=" + bookReviewEntityList +
+                ", author='" + author + '\'' +
+                ", rating=" + rating +
+                ", tags=" + tags +
+                '}';
     }
 }

@@ -2,10 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <div class="ProductCard-desc" th:fragment="bookDesc">
     <div class="ProductCard-header">
-        <h1 class="ProductCard-title">Мара и морок
+        <h1 class="ProductCard-title" th:text="${book.title}">Мара и морок
         </h1>
         <div class="ProductCard-author"><span class="ProductCard-titleProp">Автор:</span>&#32;<a
-                href="#">Лия Арден</a>
+                :href="#" th:text="${book.getAuthor()}">Лия Арден</a>
         </div>
         <div class="ProductCard-rating"><span class="ProductCard-titleProp">Рейтинг:</span>
             <button class="trigger trigger_dropdown" type="button">

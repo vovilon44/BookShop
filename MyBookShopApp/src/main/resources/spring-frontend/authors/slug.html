@@ -17,19 +17,23 @@
     <script defer src="/assets/js/scripts.min.js?v=93601584"></script>
 </head>
 <body class="Site">
-<header class="Header"
-        th:replace="~{fragments/common_header_fragment :: head(main='menu-item menu-item_ACTIVE', status='unauthorized')}"></header>
+<header class="Header" th:replace="~{fragments/common_header_fragment :: head(main='menu-item menu-item_ACTIVE', status='unauthorized')}"></header>
 <div class="Middle">
     <div class="wrap">
         <main class="Middle-main">
             <ul class="breadcrumbs"
-                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category='Борис Васильевич Бедный')}"></ul>
-            <div th:replace="~{fragments/author_article_fragment :: article(author='Борис Васильевич Бедный')}"></div>
-            <div class="Section"
-                 th:replace="~{fragments/book_slider_fragment :: bookSlider(title='Книги автора')}"></div>
-            <footer class="Section-footer"><a class="Author-books" th:href="@{/books/author}" href="/books/author.html">Все
+                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category=${author.getName()})}"></ul>
+            <div th:replace="~{fragments/author_article_fragment :: article}"></div>
+            <div class="Section-header" th:if="${books.size()} < 6">
+                <h2 class="Section-title" th:text="#{main.slider.books.author}">Рекомендуемое
+                </h2>
+            </div>
+            <div class="Section">
+                <div th:class="${books.size()} >5 ?'Cards Cards_refresh' : ''" th:replace="${books.size()} >5 ? ~{fragments/book_slider_fragment :: bookSlider(title=#{main.slider.books.author}, type='books')} : ~{fragments/books_pool_fragment :: pool(category='without')}"></div>
+            </div>
+            <footer class="Section-footer"><a class="Author-books" th:href="@{'/books/author/' + ${author.slug} }" href="/books/author.html">Все
                 книги автора<span
-                        class="Author-amount">(55)</span></a>
+                        class="Author-amount" th:text="'(' + ${books.size()} + ')'">(55)</span></a>
             </footer>
         </main>
     </div>

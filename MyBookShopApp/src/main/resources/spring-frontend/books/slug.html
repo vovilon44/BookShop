@@ -18,16 +18,16 @@
     <script defer src="/assets/js/scripts.min.js?v=87821122"></script>
 </head>
 <body class="Site">
-<header class="Header" th:replace="~{fragments/common_header_fragment :: head(status='unauthorized')}"></header>
+<header class="Header" th:replace="~{fragments/common_header_fragment :: head(main='menu-item',status='unauthorized')}"></header>
 <div class="Middle">
     <div class="wrap">
         <main class="Middle-main">
             <ul class="breadcrumbs"
-                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category='Мара и Морок')}"></ul>
+                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category=${book.title})}"></ul>
             <div class="Product">
                 <div class="ProductCard">
                     <div class="ProductCard-look">
-                        <div class="ProductCard-photo"><img src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
+                        <div class="ProductCard-photo"><img th:src="${book.image}" alt="card.jpg"/>
                         </div>
                     </div>
                     <div class="ProductCard-desc" th:replace="~{fragments/book_description_fragment :: bookDesc}"></div>
