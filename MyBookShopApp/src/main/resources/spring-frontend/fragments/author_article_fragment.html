@@ -14,15 +14,15 @@
                     <h2 th:text="#{biography}">Биография
                     </h2>
 
-                    <p th:each="textdd : ${#strings.arraySplit(showText,'&#10')}" th:text="${textdd}">
+                    <p th:text="${author.getShowText()}">
                     </p>
                 </div>
             </div>
-            <div class="Spoiler-hide" th:if="${hideText.length() > 0}">
-                <p th:each="textdd : ${#strings.arraySplit(hideText,'&#10')}" th:text="${textdd}">
+            <div class="Spoiler-hide" th:if="${author.getHideText().length() > 0}">
+                <p  th:text="${author.getHideText()}">
                 </p>
             </div>
-            <div class="Spoiler-footer" th:if="${hideText.length() > 0}">
+            <div class="Spoiler-footer" th:if="${author.getHideText().length() > 0}">
                 <button class="Spoiler-trigger btn btn_primary btn_nr" type="button" data-showtext="Свернуть"
                         data-hidetext="Показать полностью">
                 </button>

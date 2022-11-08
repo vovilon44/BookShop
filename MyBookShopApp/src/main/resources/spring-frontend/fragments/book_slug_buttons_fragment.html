@@ -5,6 +5,7 @@
         <div class="ProductCard-cartElement">
             <button class="btn btn_primary btn_outline" data-sendstatus="KEPT" data-bookid="[1111]"
                     data-btntype="check" data-btnradio="buyblock" data-check="false"
+                    th:attr="data-bookid = ${book.slug}"
                     data-alttext="Отложена"><span class="btn-icon"><img
                     src="/assets/img/icons/heart.svg" alt="heart.svg"/></span><span
                     class="btn-content">Отложить</span>
@@ -12,6 +13,7 @@
         </div>
         <div class="ProductCard-cartElement">
             <button class="btn btn_primary btn_outline" data-sendstatus="CART" data-bookid="[1111]"
+                    th:attr="data-bookid = ${book.slug}"
                     data-btntype="check" data-btnradio="buyblock" data-check="false"
                     data-alttext="В корзине"><span class="btn-icon"><img
                     src="/assets/img/icons/shopping-basket.svg"
@@ -34,5 +36,15 @@
             </button>
         </div>
     </div>
+    <div id="myPopup">
+        <p>Ссылки для скачивания</p>
+        <div th:each="bookFile : ${book.getBookFileList()}">
+            <a href="#" th:href="${'/books/download/' + bookFile.hash}"
+               th:text="${bookFile.getBookFileExtensionString()}"></a>
+        </div>
+        <span id="myPopup__close" class="close">&#10062;</span>
+    </div>
+    <div id="myOverlay"></div>
+
 </div>
 </html>

@@ -2,6 +2,8 @@ package com.example.MyBookShopApp.data.struct.book.links;
 
 import com.example.MyBookShopApp.data.Book;
 import com.example.MyBookShopApp.data.struct.tag.TagEntity;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
@@ -13,13 +15,25 @@ public class Book2TagEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "book_id", referencedColumnName = "id")
     private Book book;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "tag_id", referencedColumnName = "id")
     private TagEntity tag;
+
+    @JsonGetter("tags")
+    public String tagName(){
+        return tag.toString();
+    }
+
+    @JsonGetter("books")
+    public String booksName(){
+        return book.toString();
+    }
 
     public int getId() {
         return id;

@@ -2,6 +2,8 @@ package com.example.MyBookShopApp.data.struct.book.links;
 
 import com.example.MyBookShopApp.data.Author;
 import com.example.MyBookShopApp.data.Book;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
@@ -14,12 +16,24 @@ public class Book2AuthorEntity {
     private int id;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "book_id", referencedColumnName = "id")
     private Book book;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private Author author;
+
+    @JsonGetter("authors")
+    public String authorsFullName(){
+        return author.toString();
+    }
+
+    @JsonGetter("books")
+    public String booksName(){
+        return book.toString();
+    }
 
     @Column(columnDefinition = "INT NOT NULL  DEFAULT 0")
     private int sortIndex;

@@ -67,4 +67,15 @@ public class Book2UserEntity {
     public void setUser(UserEntity user) {
         this.user = user;
     }
+
+    @Override
+    public String toString() {
+        return "Book2UserEntity{" +
+                "id=" + id +
+                ", time=" + time +
+                ", typeId=" + typeId +
+                ", book=" + book +
+                ", user=" + user +
+                '}';
+    }
 }

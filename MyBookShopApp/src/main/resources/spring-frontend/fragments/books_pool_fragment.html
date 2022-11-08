@@ -9,7 +9,7 @@
         <div class="Card-content">
             <strong class="Card-title"><a th:href="@{'/books/' + ${book.slug}}" th:text="${book.title}">Техника</a>
             </strong>
-            <div class="Card-description" th:text="${book.author}">Кондратенко Александр Петрович
+            <div class="Card-description" th:text="${book.authorsFullName().size() > 1} ? ${book.authorsFullName().get(0)} + ' и другие' : (${book.authorsFullName().size() == 1} ? ${book.authorsFullName().get(0)} : '')">Кондратенко Александр Петрович
             </div>
             <div class="Card-cost"><span class="Card-priceOld" th:text="${book.price}" th:if="${book.discount}">₽300.00</span><span class="Card-price" th:text="${#numbers.formatDecimal(book.price - (book.discount * book.price),1,2)}">₽190.00</span>
             </div>

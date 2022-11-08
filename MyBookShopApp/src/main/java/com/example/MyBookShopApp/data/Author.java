@@ -26,6 +26,44 @@ public class Author {
     private String description;
 
     @Transient
+    private String showText;
+    @Transient
+    private String hideText;
+
+    public void setShowText(String showText) {
+        this.showText = showText;
+    }
+
+    public void setHideText(String hideText) {
+        this.hideText = hideText;
+    }
+
+    public String getShowText(){
+        String showText = "";
+        int textLimit = 500;
+        for(String text : getDescription().split("\\.")){
+            if (showText.length() + text.length() < textLimit){
+                showText+= text + ".";
+            }
+        }
+        return showText;
+    }
+
+    public String getHideText(){
+        String hideText = "";
+        String showText = "";
+        int textLimit = 500;
+        for(String text : getDescription().split("\\.")){
+            if (showText.length() + text.length() < textLimit){
+                showText+= text + ".";
+            } else {
+                hideText += text + ".";
+            }
+        }
+        return hideText;
+    }
+
+    @Transient
     @OneToMany(mappedBy = "author")
     private List<Book2AuthorEntity> book2AuthorEntityList = new ArrayList<>();
 
@@ -79,13 +117,6 @@ public class Author {
 
     @Override
     public String toString() {
-        return "Author{" +
-                "id=" + id +
-                ", photo='" + photo + '\'' +
-                ", slug='" + slug + '\'' +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", book2AuthorEntityList=" + book2AuthorEntityList +
-                '}';
+        return name;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.MyBookShopApp.data.struct.tag;
 
 import com.example.MyBookShopApp.data.struct.book.links.Book2TagEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public class TagEntity {
     private String name;
 
     String slug;
-    @Transient
+    @JsonIgnore
     @OneToMany(mappedBy = "tag")
     private List<Book2TagEntity> book2TagEntityList = new ArrayList<>();
 
@@ -56,11 +57,6 @@ public class TagEntity {
 
     @Override
     public String toString() {
-        return "TagEntity{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", slug='" + slug + '\'' +
-                ", book2TagEntityList=" + book2TagEntityList +
-                '}';
+        return name;
     }
 }

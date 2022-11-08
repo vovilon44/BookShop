@@ -47,27 +47,10 @@ public class GenresController {
 
     @GetMapping("/genres/{slugGenre}")
     public String genrePage(@PathVariable String slugGenre, Model model){
-        GenreEntity genre = genreService.getGenreEntityFromSlug(slugGenre);
-        List<GenreEntity> genreTree = new ArrayList<>();
-        if (genre.getParentId() != null){
-           genreTree = getGenreTree(new ArrayList<GenreEntity>(), genre.getParentId());
-           Collections.reverse(genreTree);
-        }
-        model.addAttribute("genre", genre);
-        model.addAttribute("genreTree", genreTree);
-        model.addAttribute("books", bookService.getBookFromGenre(slugGenre, 0, 20));
+        model.addAttribute("genre", genreService.getGenreEntityFromSlug(slugGenre));
+        model.addAttribute("genreTree", genreService.getGenreTree(slugGenre));
+        model.addAttribute("books", bookService.getBookFromGenre(slugGenre, 0, 20).getContent());
         return "genres/slug";
     }
 
-
-    private List<GenreEntity> getGenreTree(ArrayList<GenreEntity> list, Integer id){
-            GenreEntity genre = genreService.getGenreEntityFromId(id);
-            list.add(genre);
-            if (genre.getParentId() != null) {
-                getGenreTree(list, genre.getParentId());
-            } else {
-                return list;
-            }
-        return list;
-    }
 }

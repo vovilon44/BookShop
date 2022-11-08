@@ -6,10 +6,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class GenresService {
@@ -62,6 +59,29 @@ public class GenresService {
 
     public GenreEntity getGenreEntityFromSlug(String slug){
         return genreRepository.findGenreEntityBySlug(slug);
+    }
+
+    public ArrayList<GenreEntity> getGenreTree(String genreSlug){
+        GenreEntity genre = getGenreEntityFromSlug(genreSlug);
+        ArrayList<GenreEntity> genreTree;
+        if (genre.getParentId() != null){
+            genreTree = getGenreTree(new ArrayList<>(), genre.getParentId());
+            Collections.reverse(genreTree);
+        } else {
+            return new ArrayList<>();
+        }
+        return genreTree;
+    }
+
+    private ArrayList<GenreEntity> getGenreTree(ArrayList<GenreEntity> list, Integer id){
+        GenreEntity genre = getGenreEntityFromId(id);
+        list.add(genre);
+        if (genre.getParentId() != null) {
+            getGenreTree(list, genre.getParentId());
+        } else {
+            return list;
+        }
+        return list;
     }
 
     public GenreEntity getGenreEntityFromId(Integer id){

@@ -1,17 +1,20 @@
 package com.example.MyBookShopApp.data;
 
+import com.example.MyBookShopApp.data.struct.book.file.BookFile;
 import com.example.MyBookShopApp.data.struct.book.file.FileDownloadEntity;
-import com.example.MyBookShopApp.data.struct.book.links.Book2AuthorEntity;
-import com.example.MyBookShopApp.data.struct.book.links.Book2GenreEntity;
-import com.example.MyBookShopApp.data.struct.book.links.Book2UserEntity;
+import com.example.MyBookShopApp.data.struct.book.links.*;
 import com.example.MyBookShopApp.data.struct.book.review.BookReviewEntity;
 import com.example.MyBookShopApp.data.struct.payments.BalanceTransactionEntity;
 import com.example.MyBookShopApp.data.struct.tag.TagEntity;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "books")
@@ -36,18 +39,61 @@ public class Book {
     @Column(columnDefinition = "NUMERIC NOT NULL DEFAULT 0")
     private double discount;
 
-    @Transient
+    @JsonGetter("authors")
+    public List<String> authorsFullName(){
+        return book2AuthorEntityList.stream().map(e->e.authorsFullName()).collect(Collectors.toList());
+    }
+
+    @JsonGetter("tags")
+    public List<String> tagsBook(){
+        return book2TagEntityList.stream().map(e->e.tagName()).collect(Collectors.toList());
+    }
+
+    @JsonGetter("rang")
+    public Double rangBook(){
+        Double result = book2UserEntityList.stream().reduce(0.0, (x, y)->{
+            if (y.getTypeId() == 3){
+                return x + 1;
+            } else if (y.getTypeId() == 2) {
+               return x + 0.7;
+            } else if (y.getTypeId() == 1) {
+                return x + 0.4;
+            } else {
+                return x;
+            }
+        }, (x,y) -> x + y);
+        return result;
+    }
+
+
+    @JsonIgnore
     @OneToMany(mappedBy = "book")
     private List<Book2AuthorEntity> book2AuthorEntityList = new ArrayList<>();
-    @Transient
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "book")
+    private List<Book2TagEntity> book2TagEntityList = new ArrayList<>();
+    @JsonIgnore
     @OneToMany(mappedBy = "book")
     private List<Book2GenreEntity> book2GenreEntityList = new ArrayList<>();
-    @Transient
+    @JsonIgnore
     @OneToMany(mappedBy = "book")
     private List<Book2UserEntity> book2UserEntityList = new ArrayList<>();
-    @Transient
+    @JsonIgnore
     @OneToMany(mappedBy = "book")
     private List<FileDownloadEntity> fileDownloadEntityList = new ArrayList<>();
+
+    @Transient
+    private HashMap<Integer, Integer> bookLikeMap;
+    @JsonGetter("rating")
+    public Integer getBookRating(){
+        return  (int) bookLike2UserEntityList.stream().mapToDouble(e->e.getLikeValue()).average().getAsDouble();
+    }
+    @JsonIgnore
+    @OneToMany(mappedBy = "book")
+    private List<BookLike2UserEntity> bookLike2UserEntityList = new ArrayList<>();
+
+
     @Transient
     @OneToMany(mappedBy = "book")
     private List<BalanceTransactionEntity> balanceTransactionEntityList = new ArrayList<>();
@@ -55,8 +101,17 @@ public class Book {
     @OneToMany(mappedBy = "book")
     private List<BookReviewEntity> bookReviewEntityList = new ArrayList<>();
 
-    @Transient
-    private String author;
+
+    @OneToMany(mappedBy = "book")
+    private List<BookFile> bookFileList = new ArrayList<>();
+
+    public List<Book2TagEntity> getBook2TagEntityList() {
+        return book2TagEntityList;
+    }
+
+    public void setBook2TagEntityList(List<Book2TagEntity> book2TagEntityList) {
+        this.book2TagEntityList = book2TagEntityList;
+    }
 
     @Transient
     private double rating;
@@ -185,14 +240,6 @@ public class Book {
         this.bookReviewEntityList = bookReviewEntityList;
     }
 
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
     public double getRating() {
         return rating;
     }
@@ -209,27 +256,38 @@ public class Book {
         this.tags = tags;
     }
 
+    public List<BookFile> getBookFileList() {
+        return bookFileList;
+    }
+
+    public void setBookFileList(List<BookFile> bookFileList) {
+        this.bookFileList = bookFileList;
+    }
+
+    public List<BookLike2UserEntity> getBookLike2UserEntityList() {
+        return bookLike2UserEntityList;
+    }
+
+    public void setBookLike2UserEntityList(List<BookLike2UserEntity> bookLike2UserEntityList) {
+        this.bookLike2UserEntityList = bookLike2UserEntityList;
+    }
+
+    public HashMap<Integer, Integer> getBookLikeMap() {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        bookLike2UserEntityList.forEach(e->{map.put(e.getLikeValue(), map.get(e.getLikeValue()) == null ? 1 : map.get(e.getLikeValue()) + 1);
+    });
+        return map;
+    }
+
+    public void setBookLikeMap(HashMap<Integer, Integer> bookLikeMap) {
+        this.bookLikeMap = bookLikeMap;
+    }
+
     @Override
     public String toString() {
         return "Book{" +
                 "id=" + id +
-                ", pubDate=" + pubDate +
-                ", isBestseller=" + isBestseller +
-                ", slug='" + slug + '\'' +
                 ", title='" + title + '\'' +
-                ", image='" + image + '\'' +
-                ", description='" + description + '\'' +
-                ", price=" + price +
-                ", discount=" + discount +
-                ", book2AuthorEntityList=" + book2AuthorEntityList +
-                ", book2GenreEntityList=" + book2GenreEntityList +
-                ", book2UserEntityList=" + book2UserEntityList +
-                ", fileDownloadEntityList=" + fileDownloadEntityList +
-                ", balanceTransactionEntityList=" + balanceTransactionEntityList +
-                ", bookReviewEntityList=" + bookReviewEntityList +
-                ", author='" + author + '\'' +
-                ", rating=" + rating +
-                ", tags=" + tags +
                 '}';
     }
 }

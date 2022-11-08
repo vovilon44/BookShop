@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @Controller
 public class AuthorsController {
@@ -44,28 +45,15 @@ public class AuthorsController {
 
     @GetMapping("/authors/{slugAuthor}")
     public String authorPage(@PathVariable String slugAuthor, Model model){
-        int textLimit = 500;
-        Author author = authorService.getAuthorBySlug(slugAuthor);
-        String showText = "";
-        String hideText = "";
-        for(String text : author.getDescription().split("\\.")){
-            if (showText.length() + text.length() < textLimit){
-                showText+= text + ".";
-            } else {
-                hideText += text + ".";
-            }
-        }
-        model.addAttribute("author", author);
-        model.addAttribute("showText", showText);
-        model.addAttribute("hideText", hideText);
-        model.addAttribute("books",bookService.getBooksFromAuthor(slugAuthor, 0, 6));
+        model.addAttribute("author", authorService.getAuthorBySlug(slugAuthor));
+        model.addAttribute("books",bookService.getBooksFromAuthor(slugAuthor, 0, 6).getContent());
         return "authors/slug";
     }
 
     @GetMapping("/books/author/{slugAuthor}")
     public String booksForAuthorPage(@PathVariable String slugAuthor, Model model){
         model.addAttribute("author", authorService.getAuthorBySlug(slugAuthor));
-        model.addAttribute("books",bookService.getBooksFromAuthor(slugAuthor, 0, 20));
+        model.addAttribute("books",bookService.getBooksFromAuthor(slugAuthor, 0, 20).getContent());
         return "books/author";
     }
 

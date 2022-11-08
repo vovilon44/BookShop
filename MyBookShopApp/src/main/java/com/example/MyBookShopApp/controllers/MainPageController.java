@@ -1,6 +1,8 @@
 package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.data.*;
+import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
+import com.example.MyBookShopApp.errs.EmptySearchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,12 +41,12 @@ public class MainPageController {
 
     @ModelAttribute("recommendedBooks")
     public List<Book> recommendedBooks(){
-        return bookService.getPageOfRecommendedBooks(0,6);
+        return bookService.getPageOfRecommendedBooks(0,6).getContent();
     }
 
     @ModelAttribute("recentBooks")
     public List<Book> recentBooks(){
-        return bookService.getListOfRecentBooksWithoutDate(0,6);
+        return bookService.getListOfRecentBooksWithoutDate(0,6).getContent();
     }
 
     @ModelAttribute("popularBooks")
@@ -66,10 +68,14 @@ public class MainPageController {
     }
 
     @GetMapping(value = {"/search", "/search/{searchWord}"})
-    public String SearchResultsPage(@PathVariable(value = "searchWord", required = false) SearchWordDto searchWordDto, Model model){
-        model.addAttribute("searchWordDto", searchWordDto);
-        model.addAttribute("books", bookService.getBooksBySearch(searchWordDto.getExample(), 0, 20));
-        return "/search/index";
+    public String SearchResultsPage(@PathVariable(value = "searchWord", required = false) SearchWordDto searchWordDto, Model model) throws BookstoreApiWrongParameterException, EmptySearchException {
+        if (searchWordDto != null) {
+            model.addAttribute("searchWordDto", searchWordDto);
+            model.addAttribute("books", bookService.getBooksBySearch(searchWordDto.getExample(), 0, 20).getContent());
+            return "/search/index";
+        } else {
+            throw new EmptySearchException("Поиск по null невозможен");
+        }
     }
 
 

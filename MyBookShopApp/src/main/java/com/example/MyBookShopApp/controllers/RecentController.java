@@ -23,7 +23,7 @@ public class RecentController {
 
     @ModelAttribute("books")
     public List<Book> recommendedBooks() throws ParseException {
-        return bookService.getListOfRecentBooksWithoutDate(0, 20);
+        return bookService.getListOfRecentBooksWithoutDate(0, 20).getContent();
     }
 
     @ModelAttribute("searchWordDto")

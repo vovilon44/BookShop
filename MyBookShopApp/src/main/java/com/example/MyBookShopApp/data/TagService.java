@@ -2,13 +2,14 @@ package com.example.MyBookShopApp.data;
 
 import com.example.MyBookShopApp.data.struct.tag.TagEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.logging.Logger;
 
 @Service
 public class TagService
@@ -37,6 +38,20 @@ public class TagService
         });
 
         return new ArrayList<>(listDto);
+    }
+
+
+    public List<TagEntity> getTagsForBookBySlug(String slug) {
+        List tt = jdbcTemplate.query("select * from tag inner join book2tag on tag.id = book2tag.tag_id where book2tag.book_id=(select books.id from books where books.slug = :slug) ", Map.of( "slug", slug), (ResultSet rs, int rowNum) ->{
+            TagEntity tag = new TagEntity();
+            tag.setId(rs.getInt("id"));
+            tag.setName(rs.getString("name"));
+            tag.setSlug(rs.getString("slug"));
+            Logger.getLogger("TagService").info("rs: " + rs);
+            return tag;
+        });
+        Logger.getLogger("TagService").info("tags: " + tt);
+        return tt;
     }
 
     public TagEntity getTagEntityBySlug(String slug){

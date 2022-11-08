@@ -2,10 +2,12 @@ package com.example.MyBookShopApp.data.struct.user;
 
 import com.example.MyBookShopApp.data.struct.book.file.FileDownloadEntity;
 import com.example.MyBookShopApp.data.struct.book.links.Book2UserEntity;
+import com.example.MyBookShopApp.data.struct.book.links.BookLike2UserEntity;
 import com.example.MyBookShopApp.data.struct.book.review.BookReviewEntity;
 import com.example.MyBookShopApp.data.struct.book.review.BookReviewLikeEntity;
 import com.example.MyBookShopApp.data.struct.book.review.MessageEntity;
 import com.example.MyBookShopApp.data.struct.payments.BalanceTransactionEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -32,6 +34,10 @@ public class UserEntity {
 
     @Column(columnDefinition = "VARCHAR(255) NOT NULL")
     private String name;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<BookLike2UserEntity> bookLike2UserEntityList = new ArrayList<>();
 
     @Transient
     @OneToMany(mappedBy = "user")
