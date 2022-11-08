@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.logging.Logger;
 
 @Controller
 @RequestMapping("/books")
@@ -39,7 +38,6 @@ public class BookController
 
     @GetMapping("/{slugBook}")
     public String booksPage(@PathVariable String slugBook, @CookieValue(name = "booksRating", required = false) String booksRating, Model model) throws BookstoreApiWrongParameterException {
-        Logger.getLogger("aaaaaaaa").info("booksRating: " + booksRating);
         if (booksRating != null && booksRating.contains(slugBook)){
             List<String> booksRatingList = List.of(booksRating.split("/"));
             booksRatingList.forEach(e->{
