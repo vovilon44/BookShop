@@ -81,13 +81,6 @@ public class BooksRestApiController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/books/fromto")
-    @ResponseBody
-    public ResponseEntity<BooksPageDto> getCustomBooks()
-    {
-        return ResponseEntity.ok(new BooksPageDto(bookService.getBooksBySearch()));
-    }
-
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ApiResponse<BooksPageDto>> MissingServletRequestParameterException(Exception exception){
         return new ResponseEntity<>(new ApiResponse<BooksPageDto>(HttpStatus.BAD_REQUEST, "Missing required parameters", exception), HttpStatus.BAD_REQUEST);

@@ -75,24 +75,6 @@ public class BookController
                 .body(new ByteArrayResource(data));
     }
 
-    @GetMapping("/slugmy/{slugBook}")
-    public String booksPageMy(@PathVariable String slugBook, @CookieValue(name = "booksRating", required = false) String booksRating, Model model) throws BookstoreApiWrongParameterException {
-        if (booksRating.contains(slugBook)){
-            List<String> booksRatingList = List.of(booksRating.split("/"));
-            booksRatingList.forEach(e->{
-                if (e.contains(slugBook)){
-                    Integer value = Integer.parseInt(e.split("=")[1]);
-                    model.addAttribute("bookRating", value);
-                    model.addAttribute("isBookRatingEmpty", false);
-                }
-            });
-        } else {
-            model.addAttribute("isBookRatingEmpty", true);
-        }
-        model.addAttribute("book", bookService.getBookFromSlug(slugBook));
-        model.addAttribute("tags", tagService.getTagsForBookBySlug(slugBook));
-        return "/books/slugmy";
-    }
 
 
 
