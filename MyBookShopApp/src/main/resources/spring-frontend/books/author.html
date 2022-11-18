@@ -16,7 +16,7 @@
     <script defer src="/assets/js/scripts.min.js?v=40130258"></script>
 </head>
 <body class="Site">
-<header class="Header" th:replace="~{fragments/common_header_fragment :: head(authors='menu-item', status='unauthorized')}"></header>
+<header class="Header" th:replace="~{fragments/common_header_fragment :: head(authors='menu-item', status= ${authorized} ? 'authorized' : 'unauthorized')}"></header>
 <div class="Middle">
     <div class="wrap">
         <main class="Middle-main">

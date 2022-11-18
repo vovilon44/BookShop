@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="/assets/css/basic.min.css?v=65675850">
     <link rel="stylesheet" href="/assets/css/extra.min.css?v=65675850">
     <script defer src="/assets/js/scripts.min.js?v=65675850"></script>
+<!--    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}">-->
+<!--    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}">-->
 </head>
 <body class="Site">
 <header class="Header"
@@ -27,16 +29,16 @@
     </div>
     <div class="wrap">
         <main class="Middle-main">
-            <form class="form Login Login_registration" action="#" method="post">
+            <form class="form Login Login_registration" th:object="${regForm}" th:action="@{/reg}"  method="post">
                 <div class="Login-ins">
                     <div class="Login-step">
                         <div class="form-group">
-                            <input class="form-input" id="name" name="name" type="text" th:placeholder="#{enter.name}"
+                            <input class="form-input" id="name" name="name" type="text" th:field="*{name}" th:placeholder="#{enter.name}"
                                    data-validate="require"/>
                         </div>
                         <div class="form-group form-group_row">
                             <div class="form-group">
-                                <input class="form-input form-input_phone" id="phone" name="phone" type="text"
+                                <input class="form-input form-input_phone" id="phone" name="phone" th:field="*{phone}" type="text"
                                        th:placeholder="#{enter.phone}" data-mask="+7 (999) 999-99-99"
                                        data-validate="require"/>
                             </div>
@@ -52,7 +54,7 @@
                         </div>
                         <div class="form-group form-group_row">
                             <div class="form-group">
-                                <input class="form-input form-input_mail" id="mail" name="mail" type="text"
+                                <input class="form-input form-input_mail" id="mail" th:field="*{email}" name="mail" type="text"
                                        th:placeholder="#{enter.email}" data-validate="mail require"/>
                             </div>
                             <div class="form-group form-group_key">
@@ -65,8 +67,12 @@
                                 </button>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <input class="form-input form-input_password" id="pass" th:field="*{pass}" name="pass" type="text"
+                                   th:placeholder="#{enter.password}" data-validate="password require"/>
+                        </div>
                         <div class="form-group form-group_center">
-                            <button class="btn btn_primary form-btn" type="button" name="registration" id="registration"
+                            <button class="btn btn_primary form-btn" type="submit" name="registration" id="registration"
                                     disabled="disabled" th:text="#{register}">Зарегистрироваться
                             </button>
                         </div>

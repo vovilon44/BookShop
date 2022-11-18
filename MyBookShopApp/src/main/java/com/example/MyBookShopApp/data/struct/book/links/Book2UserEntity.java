@@ -1,7 +1,7 @@
 package com.example.MyBookShopApp.data.struct.book.links;
 
 import com.example.MyBookShopApp.data.Book;
-import com.example.MyBookShopApp.data.struct.user.UserEntity;
+import com.example.MyBookShopApp.security.BookstoreUser;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -26,7 +26,7 @@ public class Book2UserEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private UserEntity user;
+    private BookstoreUser user;
 
     public int getId() {
         return id;
@@ -60,11 +60,11 @@ public class Book2UserEntity {
         this.book = book;
     }
 
-    public UserEntity getUser() {
+    public BookstoreUser getUser() {
         return user;
     }
 
-    public void setUser(UserEntity user) {
+    public void setUser(BookstoreUser user) {
         this.user = user;
     }
 

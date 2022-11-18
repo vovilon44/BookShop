@@ -1,11 +1,18 @@
-package com.example.MyBookShopApp.data;
+package com.example.MyBookShopApp.data.services;
 
-import com.example.MyBookShopApp.data.struct.book.links.BookLike2UserEntity;
+import com.example.MyBookShopApp.data.ApiResponse;
+import com.example.MyBookShopApp.data.Book;
+import com.example.MyBookShopApp.data.BooksPageDto;
+import com.example.MyBookShopApp.data.repositories.Book2AuthorRepository;
+import com.example.MyBookShopApp.data.repositories.BookLike2UserRepository;
+import com.example.MyBookShopApp.data.repositories.BookRepository;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
+import com.example.MyBookShopApp.security.BookstoreUserRegister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -17,8 +24,8 @@ import java.sql.ResultSet;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.logging.Logger;
 
 @Service
 public class BookService {
@@ -29,14 +36,16 @@ public class BookService {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final ResourceStorage storage;
+    private  final BookstoreUserRegister userRegister;
 
     @Autowired
-    public BookService(BookRepository bookRepository, NamedParameterJdbcTemplate jdbcTemplate, ResourceStorage storage, Book2AuthorRepository book2AuthorRepository, BookLike2UserRepository bookLike2UserRepository) {
+    public BookService(BookRepository bookRepository, NamedParameterJdbcTemplate jdbcTemplate, ResourceStorage storage, Book2AuthorRepository book2AuthorRepository, BookLike2UserRepository bookLike2UserRepository, BookstoreUserRegister userRegister) {
         this.bookRepository = bookRepository;
         this.bookLike2UserRepository = bookLike2UserRepository;
         this.book2AuthorRepository = book2AuthorRepository;
         this.jdbcTemplate = jdbcTemplate;
         this.storage = storage;
+        this.userRegister = userRegister;
     }
 
 
@@ -67,17 +76,17 @@ public class BookService {
     }
 
 
-    public Page<Book> getListOfRecentBooks(Integer offset, Integer limit, String from, String to) throws ParseException {
+    public List<Book> getListOfRecentBooks(Integer offset, Integer limit, String from, String to) throws ParseException {
         DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
         Pageable nextPage = PageRequest.of(offset,limit);
-        return bookRepository.findBooksByPubDateBetweenOrderByPubDateDesc(df.parse(from), df.parse(to),nextPage);
+        return bookRepository.findBooksByPubDateBetweenOrderByPubDateDesc(df.parse(from), df.parse(to),nextPage).getContent();
     }
 
 
 
-    public Page<Book> getListOfRecentBooksWithoutDate(Integer offset, Integer limit){
+    public List<Book> getListOfRecentBooksWithoutDate(Integer offset, Integer limit){
         Pageable nextPage = PageRequest.of(offset,limit);
-        return bookRepository.findBooksByOrderByPubDateDesc(nextPage);
+        return bookRepository.findBooksByOrderByPubDateDesc(nextPage).getContent();
     }
 
     public Page<Book> getBookFromGenre(String slugGenre, Integer offset, Integer limit){
@@ -95,7 +104,6 @@ public class BookService {
             throw new BookstoreApiWrongParameterException("Wrong values passed to one or more parameters");
         } else {
             Book book =  bookRepository.findBookBySlug(slugBook);
-            Logger.getLogger("LOOGGGG").info("BOOK: " + book);
             if (book != null){
                 return book;
             } else {
@@ -133,7 +141,6 @@ public class BookService {
     }
 
     public void saveFile(MultipartFile file, String slug) throws IOException, BookstoreApiWrongParameterException {
-        Logger.getLogger("BookService").info("saveFile...!!!");
         String savePath = storage.saveNewBookImage(file, slug);
         Book bookToUpdate = getBookFromSlug(slug);
         bookToUpdate.setImage(savePath);
@@ -148,11 +155,8 @@ public class BookService {
 
     public byte[] getBookFile(String hash) throws IOException {
         Path path = storage.getBookFilePath(hash);
-        Logger.getLogger("BookServ").info("bookFilePath: " + path);
         MediaType mediaType = storage.getBookFileMime(hash);
-        Logger.getLogger("BookServ").info("bookFileMedia: " + mediaType);
         byte[] data = storage.getBookFileByteArray(hash);
-        Logger.getLogger("BookServ").info("bookFileLength: " + data.length);
         return data;
     }
 
@@ -163,4 +167,31 @@ public class BookService {
     public MediaType getBookFileMime(String hash) {
         return storage.getBookFileMime(hash);
     }
+
+    public ApiResponse<BooksPageDto> getResponseBooks(List<Book> books){
+        ApiResponse<BooksPageDto> response = new ApiResponse<>();
+        BooksPageDto data = new BooksPageDto(books);
+        response.setDebugMessage("successful request");
+        response.setMessage("data size: " + data.getCount() + " elements");
+        response.setStatus(HttpStatus.OK);
+        response.setTimeStamp(LocalDateTime.now());
+        response.setData(data);
+        return response;
+    }
+
+    public List<Book> getBooksInSlugs(String contents){
+        contents = contents.startsWith("/") ? contents.substring(1) : contents;
+        contents = contents.endsWith("/") ? contents.substring(0, contents.length() - 1) : contents;
+        String[] cookieSlugs = contents.split("/");
+        return bookRepository.findBooksBySlugIn(cookieSlugs);
+    }
+
+    public List<Book> getBooksInCart(Integer type){
+        List<Book> list = bookRepository.findBooksByBook2UserEntityList_TypeIdAndBook2UserEntityList_User_Email(type, userRegister.getCurrentUser().getEmail());
+        return list;
+    }
+
+
+
+
 }

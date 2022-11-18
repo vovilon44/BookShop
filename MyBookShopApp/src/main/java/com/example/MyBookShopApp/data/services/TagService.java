@@ -1,15 +1,17 @@
-package com.example.MyBookShopApp.data;
+package com.example.MyBookShopApp.data.services;
 
+import com.example.MyBookShopApp.data.TagWithRangDto;
+import com.example.MyBookShopApp.data.repositories.TagRepository;
 import com.example.MyBookShopApp.data.struct.tag.TagEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
-import java.util.*;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class TagService
@@ -36,7 +38,6 @@ public class TagService
             int rang = (maximum - count) / ((maximum - minimum) / 4);
             return new TagWithRangDto(map.get(rs.getInt("id")), rang);
         });
-
         return new ArrayList<>(listDto);
     }
 
@@ -47,10 +48,8 @@ public class TagService
             tag.setId(rs.getInt("id"));
             tag.setName(rs.getString("name"));
             tag.setSlug(rs.getString("slug"));
-            Logger.getLogger("TagService").info("rs: " + rs);
             return tag;
         });
-        Logger.getLogger("TagService").info("tags: " + tt);
         return tt;
     }
 

@@ -17,7 +17,7 @@
 </head>
 <body class="Site">
 <header class="Header"
-        th:replace="~{fragments/common_header_fragment :: head(main='menu-item',status='unauthorized')}"></header>
+        th:replace="~{fragments/common_header_fragment :: head(main='menu-item',status=${authorized} ? 'authorized' : 'unauthorized')}"></header>
 <div class="Middle">
     <div class="wrap">
         <main class="Middle-main">
@@ -35,7 +35,7 @@
                             <div class="Cart-block Cart-block_info">
                                 <div class="Cart-author"><a href="#" th:text="${book.authorsFullName().size() > 1} ? ${book.authorsFullName().get(0)} + ' и другие' : (${book.authorsFullName().size() == 1} ? ${book.authorsFullName().get(0)} : '')">Борис Васильевич Бедный</a>
                                 </div>
-                                <div class="Cart-title"><a href="#" th:text="${book.title}">Жизнь</a>
+                                <div class="Cart-title"><a th:href="@{'/books/' + ${book.slug}}" th:text="${book.title}">Жизнь</a>
                                 </div>
                                 <div class="Cart-rating"><span class="Rating"><span class="Rating-stars"><span
                                         class="Rating-star Rating-star_view">

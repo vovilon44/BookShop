@@ -1,7 +1,7 @@
 package com.example.MyBookShopApp.data.struct.book.file;
 
 import com.example.MyBookShopApp.data.Book;
-import com.example.MyBookShopApp.data.struct.user.UserEntity;
+import com.example.MyBookShopApp.security.BookstoreUser;
 
 import javax.persistence.*;
 
@@ -15,7 +15,7 @@ public class FileDownloadEntity {
 
     @ManyToOne
     @JoinColumn(name = "iser_id", referencedColumnName = "id")
-    private UserEntity user;
+    private BookstoreUser user;
 
     @ManyToOne
     @JoinColumn(name = "book_id", referencedColumnName = "id")
@@ -32,11 +32,11 @@ public class FileDownloadEntity {
         this.id = id;
     }
 
-    public UserEntity getUser() {
+    public BookstoreUser getUser() {
         return user;
     }
 
-    public void setUser(UserEntity user) {
+    public void setUser(BookstoreUser user) {
         this.user = user;
     }
 

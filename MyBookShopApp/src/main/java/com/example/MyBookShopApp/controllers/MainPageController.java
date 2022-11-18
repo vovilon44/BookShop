@@ -1,6 +1,8 @@
 package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.data.*;
+import com.example.MyBookShopApp.data.services.BookService;
+import com.example.MyBookShopApp.data.services.TagService;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
 import com.example.MyBookShopApp.errs.EmptySearchException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 @Controller
 public class MainPageController {
@@ -27,6 +28,8 @@ public class MainPageController {
         this.bookService = bookService;
         this.tagService = tagService;
     }
+
+
 
     @ModelAttribute("searchWordDto")
     public SearchWordDto searchWordDto(){
@@ -46,7 +49,7 @@ public class MainPageController {
 
     @ModelAttribute("recentBooks")
     public List<Book> recentBooks(){
-        return bookService.getListOfRecentBooksWithoutDate(0,6).getContent();
+        return bookService.getListOfRecentBooksWithoutDate(0,6);
     }
 
     @ModelAttribute("popularBooks")
@@ -62,8 +65,7 @@ public class MainPageController {
     }
 
     @GetMapping("/")
-    public String mainPage(Model model){
-        Logger.getLogger("MainPageController").info("recentBooks " + model.getAttribute("recentBooks"));
+    public String mainPage(){
         return "index";
     }
 

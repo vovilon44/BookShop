@@ -1,10 +1,10 @@
 package com.example.MyBookShopApp.data.struct.book.links;
 
 import com.example.MyBookShopApp.data.Book;
-import com.example.MyBookShopApp.data.struct.user.UserEntity;
+import com.example.MyBookShopApp.security.BookstoreUser;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 
 @Entity
 public class BookLike2UserEntity
@@ -26,7 +26,7 @@ public class BookLike2UserEntity
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private UserEntity user;
+    private BookstoreUser user;
 
     public Integer getId() {
         return id;
@@ -60,11 +60,22 @@ public class BookLike2UserEntity
         this.book = book;
     }
 
-    public UserEntity getUser() {
+    public BookstoreUser getUser() {
         return user;
     }
 
-    public void setUser(UserEntity user) {
+    public void setUser(BookstoreUser user) {
         this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "BookLike2UserEntity{" +
+                "id=" + id +
+                ", pubDate=" + pubDate +
+                ", likeValue=" + likeValue +
+                ", book=" + book.getSlug() +
+                ", user=" + user.getName() +
+                '}';
     }
 }

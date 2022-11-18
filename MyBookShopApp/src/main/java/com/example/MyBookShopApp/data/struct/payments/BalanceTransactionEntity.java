@@ -1,11 +1,10 @@
 package com.example.MyBookShopApp.data.struct.payments;
 
 import com.example.MyBookShopApp.data.Book;
-import com.example.MyBookShopApp.data.struct.user.UserEntity;
+import com.example.MyBookShopApp.security.BookstoreUser;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "balance_transaction")
@@ -16,7 +15,7 @@ public class BalanceTransactionEntity {
     private int id;
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private UserEntity user;
+    private BookstoreUser user;
 
     @Column(columnDefinition = "DATE NOT NULL")
     private LocalDate time;
@@ -63,11 +62,11 @@ public class BalanceTransactionEntity {
         this.description = description;
     }
 
-    public UserEntity getUser() {
+    public BookstoreUser getUser() {
         return user;
     }
 
-    public void setUser(UserEntity user) {
+    public void setUser(BookstoreUser user) {
         this.user = user;
     }
 

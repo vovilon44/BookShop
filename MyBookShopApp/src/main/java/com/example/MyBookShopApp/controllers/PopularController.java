@@ -1,7 +1,7 @@
 package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.data.Book;
-import com.example.MyBookShopApp.data.BookService;
+import com.example.MyBookShopApp.data.services.BookService;
 import com.example.MyBookShopApp.data.SearchWordDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,13 +18,13 @@ public class PopularController {
         return new SearchWordDto();
     }
 
+
     private final BookService bookService;
 
     @Autowired
     public PopularController(BookService bookService) {
         this.bookService = bookService;
     }
-
 
     @ModelAttribute("books")
     public List<Book> popularBooks(){

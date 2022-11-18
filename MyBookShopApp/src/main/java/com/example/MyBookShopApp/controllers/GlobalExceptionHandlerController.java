@@ -1,5 +1,6 @@
 package com.example.MyBookShopApp.controllers;
 
+import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
 import com.example.MyBookShopApp.errs.EmptySearchException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,4 +17,13 @@ public class GlobalExceptionHandlerController
         redirectAttributes.addFlashAttribute("searchError", e);
         return "redirect:/";
     }
+
+    @ExceptionHandler(BookstoreApiWrongParameterException.class)
+    public String handleEmptySearchException(BookstoreApiWrongParameterException e){
+        Logger.getLogger(this.getClass().getSimpleName()).warning(e.getLocalizedMessage());
+        return "redirect:/";
+    }
+
+
+
 }

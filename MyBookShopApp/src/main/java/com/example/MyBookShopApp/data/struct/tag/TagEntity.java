@@ -57,6 +57,10 @@ public class TagEntity {
 
     @Override
     public String toString() {
-        return name;
+        return "TagEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", slug='" + slug + '\'' +
+                '}';
     }
 }

@@ -1,11 +1,14 @@
 package com.example.MyBookShopApp.data.struct.book.review;
 
 import com.example.MyBookShopApp.data.Book;
-import com.example.MyBookShopApp.data.struct.user.UserEntity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import com.example.MyBookShopApp.security.BookstoreUser;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,8 +25,8 @@ public class BookReviewEntity {
     private Book book;
 
     @ManyToOne
-    @JoinColumn(name = "iser_id", referencedColumnName = "id")
-    private UserEntity user;
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private BookstoreUser user;
 
     @Column(columnDefinition = "DATE NOT NULL")
     private LocalDate time;
@@ -33,6 +36,47 @@ public class BookReviewEntity {
 
     @OneToMany(mappedBy = "review")
     private List<BookReviewLikeEntity> bookReviewLikeEntityList = new ArrayList<>();
+
+    public String getShowText(){
+        String showText = "";
+        for (String str : text.split("\\.")){
+            if (showText.length() + str.length() < 750 ){
+                showText += str + ". ";
+            } else {
+                return showText;
+            }
+        }
+        return showText;
+    }
+
+    public String getHideText(){
+        String hideText = "";
+        String showText = "";
+        boolean hide = true;
+        for (String str : text.split("\\.")){
+            if (showText.length() + str.length() < 750 && hide){
+                showText += str + ". ";
+            } else {
+                hide = false;
+                hideText += str + ". ";
+            }
+        }
+        return hideText;
+    }
+
+    public Long getPosLikeCount(){
+        return (bookReviewLikeEntityList.stream().filter(e -> e.getValue() > 0).count());
+    }
+
+
+    public Long getNegLikeCount(){
+        return (bookReviewLikeEntityList.stream().filter(e -> e.getValue() < 0).count());
+    }
+
+
+    public Double getRating() {
+        return ((double) bookReviewLikeEntityList.stream().filter(e -> e.getValue() > 0).count()) / bookReviewLikeEntityList.size();
+    }
 
     public int getId() {
         return id;
@@ -50,11 +94,12 @@ public class BookReviewEntity {
         this.book = book;
     }
 
-    public UserEntity getUser() {
+    public BookstoreUser getUser() {
         return user;
     }
 
-    public void setUser(UserEntity user) {
+
+    public void setUser(BookstoreUser user) {
         this.user = user;
     }
 
@@ -80,5 +125,18 @@ public class BookReviewEntity {
 
     public void setBookReviewLikeEntityList(List<BookReviewLikeEntity> bookReviewLikeEntityList) {
         this.bookReviewLikeEntityList = bookReviewLikeEntityList;
+    }
+
+    @Override
+    public String toString() {
+        return "BookReviewEntity{" +
+                "id=" + id +
+                ", book=" + book.getTitle() +
+                ", user=" + user.getName() +
+                ", time=" + time + + '\'' +
+                ", textShow='" + getShowText() + "\' \n" +
+                " textHide='" + getHideText() + '\'' +
+                ", bookReviewLikeEntityList=" + bookReviewLikeEntityList +
+                '}';
     }
 }

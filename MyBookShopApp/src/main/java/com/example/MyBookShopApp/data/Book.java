@@ -87,8 +87,25 @@ public class Book {
     private HashMap<Integer, Integer> bookLikeMap;
     @JsonGetter("rating")
     public Integer getBookRating(){
-        return  (int) bookLike2UserEntityList.stream().mapToDouble(e->e.getLikeValue()).average().getAsDouble();
+        if (bookLike2UserEntityList.size() > 0) {
+            return (int) bookLike2UserEntityList.stream().mapToDouble(e -> e.getLikeValue()).average().getAsDouble();
+        }
+        else {
+           return  0;
+        }
     }
+
+    @JsonGetter("ratingReviews")
+    public Double getBookRatingReviews(){
+        if (bookReviewEntityList.size() > 0) {
+            return bookReviewEntityList.stream().mapToDouble(e -> e.getRating()).average().getAsDouble();
+        }
+        else {
+            return  0.0;
+        }
+    }
+
+
     @JsonIgnore
     @OneToMany(mappedBy = "book")
     private List<BookLike2UserEntity> bookLike2UserEntityList = new ArrayList<>();
@@ -97,7 +114,7 @@ public class Book {
     @Transient
     @OneToMany(mappedBy = "book")
     private List<BalanceTransactionEntity> balanceTransactionEntityList = new ArrayList<>();
-    @Transient
+    @JsonIgnore
     @OneToMany(mappedBy = "book")
     private List<BookReviewEntity> bookReviewEntityList = new ArrayList<>();
 

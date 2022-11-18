@@ -1,5 +1,8 @@
-package com.example.MyBookShopApp.data;
+package com.example.MyBookShopApp.data.services;
 
+import com.example.MyBookShopApp.data.repositories.GenreRepository;
+import com.example.MyBookShopApp.data.GenresDtoFirst;
+import com.example.MyBookShopApp.data.GenresDtoSecond;
 import com.example.MyBookShopApp.data.struct.genre.GenreEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;

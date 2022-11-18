@@ -1,4 +1,4 @@
-package com.example.MyBookShopApp.data.struct.user;
+package com.example.MyBookShopApp.security;
 
 import com.example.MyBookShopApp.data.struct.book.file.FileDownloadEntity;
 import com.example.MyBookShopApp.data.struct.book.links.Book2UserEntity;
@@ -7,33 +7,29 @@ import com.example.MyBookShopApp.data.struct.book.review.BookReviewEntity;
 import com.example.MyBookShopApp.data.struct.book.review.BookReviewLikeEntity;
 import com.example.MyBookShopApp.data.struct.book.review.MessageEntity;
 import com.example.MyBookShopApp.data.struct.payments.BalanceTransactionEntity;
+import com.example.MyBookShopApp.data.struct.user.UserContactEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class UserEntity {
-
+public class BookstoreUser
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
-    @Column(columnDefinition = "VARCHAR(255) NOT NULL")
-    private String hash;
-
-    @Column(columnDefinition = "DATE NOT NULL")
-    private LocalDate regTime;
-
-    @Column(columnDefinition = "INT NOT NULL")
-    private double balance;
-
-    @Column(columnDefinition = "VARCHAR(255) NOT NULL")
+    private Integer id;
     private String name;
+    private String email;
+
+    private Date regTime;
+
+    private double balance;
+    private String phone;
+    private String password;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")
@@ -42,6 +38,7 @@ public class UserEntity {
     @Transient
     @OneToMany(mappedBy = "user")
     private List<Book2UserEntity> book2UserEntityList = new ArrayList<>();
+
     @Transient
     @OneToMany(mappedBy = "user")
     private List<FileDownloadEntity> fileDownloadEntityList = new ArrayList<>();
@@ -49,7 +46,7 @@ public class UserEntity {
     @Transient
     @OneToMany(mappedBy = "user")
     private List<BalanceTransactionEntity> balanceTransactionEntityList = new ArrayList<>();
-    @Transient
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<BookReviewEntity> bookReviewEntityList = new ArrayList<>();
 
@@ -65,28 +62,35 @@ public class UserEntity {
     @OneToMany(mappedBy = "user")
     private List<UserContactEntity> userContactEntityList = new ArrayList<>();
 
-
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public String getHash() {
-        return hash;
+    public String getName() {
+        return name;
     }
 
-    public void setHash(String hash) {
-        this.hash = hash;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public LocalDate getRegTime() {
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Date getRegTime() {
         return regTime;
     }
 
-    public void setRegTime(LocalDate regTime) {
+    public void setRegTime(Date regTime) {
         this.regTime = regTime;
     }
 
@@ -98,20 +102,28 @@ public class UserEntity {
         this.balance = balance;
     }
 
-    public List<UserContactEntity> getUserContactEntityList() {
-        return userContactEntityList;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setUserContactEntityList(List<UserContactEntity> userContactEntityList) {
-        this.userContactEntityList = userContactEntityList;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    public String getName() {
-        return name;
+    public String getPassword() {
+        return password;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public List<BookLike2UserEntity> getBookLike2UserEntityList() {
+        return bookLike2UserEntityList;
+    }
+
+    public void setBookLike2UserEntityList(List<BookLike2UserEntity> bookLike2UserEntityList) {
+        this.bookLike2UserEntityList = bookLike2UserEntityList;
     }
 
     public List<Book2UserEntity> getBook2UserEntityList() {
@@ -160,5 +172,26 @@ public class UserEntity {
 
     public void setBookReviewLikeEntityList(List<BookReviewLikeEntity> bookReviewLikeEntityList) {
         this.bookReviewLikeEntityList = bookReviewLikeEntityList;
+    }
+
+    public List<UserContactEntity> getUserContactEntityList() {
+        return userContactEntityList;
+    }
+
+    public void setUserContactEntityList(List<UserContactEntity> userContactEntityList) {
+        this.userContactEntityList = userContactEntityList;
+    }
+
+    @Override
+    public String toString() {
+        return "BookstoreUser{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", regTime=" + regTime +
+                ", balance=" + balance +
+                ", phone='" + phone + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }

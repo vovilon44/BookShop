@@ -1,7 +1,7 @@
 package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.data.ApiResponse;
-import com.example.MyBookShopApp.data.BookService;
+import com.example.MyBookShopApp.data.services.BookService;
 import com.example.MyBookShopApp.data.BooksPageDto;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,33 +25,33 @@ public class BooksRestApiController {
     }
 
     @GetMapping("/books/recommended")
-    public ResponseEntity<BooksPageDto> getRecommendedBooks(@RequestParam("offset") Integer offset, @RequestParam("limit") Integer limit)
+    public ResponseEntity<ApiResponse<BooksPageDto>> getRecommendedBooks(@RequestParam("offset") Integer offset, @RequestParam("limit") Integer limit)
     {
-        return ResponseEntity.ok(new BooksPageDto(bookService.getPageOfRecommendedBooks(offset, limit).getContent()));
+        return ResponseEntity.ok(bookService.getResponseBooks(bookService.getPageOfRecommendedBooks(offset, limit).getContent()));
     }
 
     @GetMapping("/books/recent")
     @ResponseBody
-    public ResponseEntity<BooksPageDto> getRecentBooks(@RequestParam("offset") Integer offset, @RequestParam("limit") Integer limit, @RequestParam("from") String from, @RequestParam("to") String to) throws ParseException {
+    public ResponseEntity<ApiResponse<BooksPageDto>> getRecentBooks(@RequestParam("offset") Integer offset, @RequestParam("limit") Integer limit, @RequestParam(name = "from", required = false) String from, @RequestParam(name = "to", required = false) String to) throws ParseException {
         if (from != null && !from.equals("") && to != null && !to.equals("")) {
-            return ResponseEntity.ok(new BooksPageDto(bookService.getListOfRecentBooks(offset, limit, from, to).getContent()));
+            return ResponseEntity.ok(bookService.getResponseBooks(bookService.getListOfRecentBooks(offset, limit, from, to)));
         } else {
-            return ResponseEntity.ok(new BooksPageDto(bookService.getListOfRecentBooksWithoutDate(offset, limit).getContent()));
+            return ResponseEntity.ok(bookService.getResponseBooks(bookService.getListOfRecentBooksWithoutDate(offset, limit)));
         }
     }
 
     @GetMapping("/books/popular")
     @ResponseBody
-    public ResponseEntity<BooksPageDto> getPopularBooks(@RequestParam("offset") Integer offset, @RequestParam("limit") Integer limit)
+    public ResponseEntity<ApiResponse<BooksPageDto>> getPopularBooks(@RequestParam("offset") Integer offset, @RequestParam("limit") Integer limit)
     {
-        return ResponseEntity.ok(new BooksPageDto(bookService.getListOfPopularBooks(offset, limit)));
+        return ResponseEntity.ok(bookService.getResponseBooks(bookService.getListOfPopularBooks(offset, limit)));
     }
 
     @GetMapping("/books/genre/{slugGenre}")
     @ResponseBody
-    public ResponseEntity<BooksPageDto> getBooksForGenre(@RequestParam("offset") Integer offset, @RequestParam("limit") Integer limit, @PathVariable String slugGenre)
+    public ResponseEntity<ApiResponse<BooksPageDto>> getBooksForGenre(@RequestParam("offset") Integer offset, @RequestParam("limit") Integer limit, @PathVariable String slugGenre)
     {
-        return ResponseEntity.ok(new BooksPageDto(bookService.getBookFromGenre(slugGenre,offset, limit).getContent()));
+        return ResponseEntity.ok(bookService.getResponseBooks(bookService.getBookFromGenre(slugGenre,offset, limit).getContent()));
     }
 
     @GetMapping("/books/author/{slugAuthor}")
@@ -63,16 +63,9 @@ public class BooksRestApiController {
 
     @GetMapping("/books/tag/{slugTag}")
     @ResponseBody
-    public ResponseEntity<BooksPageDto> getBooksForTag(@RequestParam("offset") Integer offset, @RequestParam("limit") Integer limit, @PathVariable String slugTag) throws BookstoreApiWrongParameterException {
-        return ResponseEntity.ok(new BooksPageDto(bookService.getBookFromTag(slugTag,offset, limit).getContent()));
-    }
-
-
-    @GetMapping("/search/{searchText}")
-    @ResponseBody
-    public ResponseEntity<ApiResponse<BooksPageDto>> getSearchBooks(@RequestParam("offset") Integer offset, @RequestParam("limit") Integer limit, @PathVariable String searchText) throws BookstoreApiWrongParameterException {
+    public ResponseEntity<ApiResponse<BooksPageDto>> getBooksForTag(@RequestParam("offset") Integer offset, @RequestParam("limit") Integer limit, @PathVariable String slugTag) throws BookstoreApiWrongParameterException {
         ApiResponse<BooksPageDto> response = new ApiResponse<>();
-        BooksPageDto data = new BooksPageDto(bookService.getBooksBySearch(searchText,offset, limit).getContent());
+        BooksPageDto data = new BooksPageDto(bookService.getBookFromTag(slugTag,offset, limit).getContent());
         response.setDebugMessage("successful request");
         response.setMessage("data size: " + data.getCount() + " elements");
         response.setStatus(HttpStatus.OK);
@@ -80,6 +73,15 @@ public class BooksRestApiController {
         response.setData(data);
         return ResponseEntity.ok(response);
     }
+
+
+    @GetMapping("/search/{searchText}")
+    @ResponseBody
+    public ResponseEntity<ApiResponse<BooksPageDto>> getSearchBooks(@RequestParam("offset") Integer offset, @RequestParam("limit") Integer limit, @PathVariable String searchText) throws BookstoreApiWrongParameterException {
+        return ResponseEntity.ok(bookService.getResponseBooks(bookService.getBooksBySearch(searchText,offset, limit).getContent()));
+    }
+
+
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ApiResponse<BooksPageDto>> MissingServletRequestParameterException(Exception exception){

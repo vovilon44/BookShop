@@ -1,7 +1,7 @@
 package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.data.Book;
-import com.example.MyBookShopApp.data.BookService;
+import com.example.MyBookShopApp.data.services.BookService;
 import com.example.MyBookShopApp.data.SearchWordDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,7 +23,7 @@ public class RecentController {
 
     @ModelAttribute("books")
     public List<Book> recommendedBooks() throws ParseException {
-        return bookService.getListOfRecentBooksWithoutDate(0, 20).getContent();
+        return bookService.getListOfRecentBooksWithoutDate(0, 20);
     }
 
     @ModelAttribute("searchWordDto")

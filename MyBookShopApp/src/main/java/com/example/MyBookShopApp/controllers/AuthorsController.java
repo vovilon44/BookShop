@@ -1,8 +1,8 @@
 package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.data.Author;
-import com.example.MyBookShopApp.data.AuthorService;
-import com.example.MyBookShopApp.data.BookService;
+import com.example.MyBookShopApp.data.services.AuthorService;
+import com.example.MyBookShopApp.data.services.BookService;
 import com.example.MyBookShopApp.data.SearchWordDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 @Controller
 public class AuthorsController {

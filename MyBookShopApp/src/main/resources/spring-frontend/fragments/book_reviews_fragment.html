@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="reviewBlock">
     <div class="Comments">
-        <div class="Comment">
+        <div class="Comment" th:if="${reviewsBook.size() > 0}" th:each="review : ${reviewsBook}">
             <div class="Comment-column Comment-column_pict">
                 <div class="Comment-avatar">
                 </div>
@@ -10,9 +10,8 @@
             <div class="Comment-column">
                 <header class="Comment-header">
                     <div>
-                        <strong class="Comment-title">Александр Кузнецов<span class="Comment-rating"><span
-                                class="Rating Rating_comment"><span class="Rating-stars"><span
-                                class="Rating-star Rating-star_view">
+                        <strong class="Comment-title" >[[${review.getUser().getName()}]]<span class="Comment-rating">
+                            <span class="Rating Rating_comment"><span class="Rating-stars"><span th:class="'Rating-star' + (${review.getRating() >= 0.2} ? 'Rating-star_view' : '')">
                               <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
                                 <g>
                                   <g>
@@ -20,7 +19,7 @@
                                           d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
                                   </g>
                                 </g>
-                              </svg></span><span class="Rating-star Rating-star_view">
+                              </svg></span><span th:class="'Rating-star' + (${review.getRating() >= 0.4} ? 'Rating-star_view' : '')">
                               <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
                                 <g>
                                   <g>
@@ -28,7 +27,7 @@
                                           d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
                                   </g>
                                 </g>
-                              </svg></span><span class="Rating-star">
+                              </svg></span><span th:class="'Rating-star' + (${review.getRating() >= 0.6} ? 'Rating-star_view' : '')">
                               <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
                                 <g>
                                   <g>
@@ -36,7 +35,7 @@
                                           d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
                                   </g>
                                 </g>
-                              </svg></span><span class="Rating-star">
+                              </svg></span><span th:class="'Rating-star' + (${review.getRating() >= 0.8} ? 'Rating-star_view' : '')">
                               <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
                                 <g>
                                   <g>
@@ -44,7 +43,7 @@
                                           d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
                                   </g>
                                 </g>
-                              </svg></span><span class="Rating-star">
+                              </svg></span><span th:class="'Rating-star' + (${review.getRating() == 1} ? 'Rating-star_view' : '')">
                               <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
                                 <g>
                                   <g>
@@ -53,96 +52,13 @@
                                   </g>
                                 </g>
                               </svg></span></span></span></span>
-                        </strong><span class="Comment-date">17.04.2020 16:40</span>
-                    </div>
-                </header>
-                <div class="Comment-content">
-                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit doli. Aenean commodo ligula eget dolor.
-                        Aenean massa. Cumtipsu sociis natoque penatibus et magnis dis parturient montesti, nascetur
-                        ridiculus mus. Donec quam felis, ultricies nec, pellentesque eutu, pretiumem. Nulla consequat
-                        massa
-                        quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim
-                        justotuio,
-                        rhoncus ut loret, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis
-                        pretium.
-                        Integer tincidunt. Cras dapibus. Vivamus element semper nisi. Aenean vulputate eleifend tellus.
-                        Aenean leo ligula, porttitor eu, consequat vitae.
-                    </p>
-                    <div class="Comment-footer">
-                        <div class="Comment-appeal">
-                            <button class="btn btn_white btn_like" data-btntype="check" data-check="false"
-                                    data-btnradio="two2" data-likeid="1111"><span class="btn-icon"><img
-                                    src="/assets/img/icons/comment/like.svg" alt="like.svg"/></span><span
-                                    class="btn-content">200</span>
-                            </button>
-                            <button class="btn btn_white btn_dislike" data-btntype="check" data-check="false"
-                                    data-btnradio="two2" data-likeid="1111"><span class="btn-icon"><img
-                                    src="/assets/img/icons/comment/dislike.svg" alt="dislike.svg"/></span><span
-                                    class="btn-content">100</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="Comment">
-            <div class="Comment-column Comment-column_pict">
-                <div class="Comment-avatar">
-                </div>
-            </div>
-            <div class="Comment-column">
-                <header class="Comment-header">
-                    <div>
-                        <strong class="Comment-title">Дмитрий Петров<span class="Comment-rating"><span
-                                class="Rating Rating_comment"><span class="Rating-stars"><span
-                                class="Rating-star Rating-star_view">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                                <g>
-                                  <g>
-                                    <path fill="#ffc000"
-                                          d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                                  </g>
-                                </g>
-                              </svg></span><span class="Rating-star Rating-star_view">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                                <g>
-                                  <g>
-                                    <path fill="#ffc000"
-                                          d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                                  </g>
-                                </g>
-                              </svg></span><span class="Rating-star Rating-star_view">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                                <g>
-                                  <g>
-                                    <path fill="#ffc000"
-                                          d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                                  </g>
-                                </g>
-                              </svg></span><span class="Rating-star Rating-star_view">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                                <g>
-                                  <g>
-                                    <path fill="#ffc000"
-                                          d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                                  </g>
-                                </g>
-                              </svg></span><span class="Rating-star">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                                <g>
-                                  <g>
-                                    <path fill="#ffc000"
-                                          d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                                  </g>
-                                </g>
-                              </svg></span></span></span></span>
-                        </strong><span class="Comment-date">17.04.2020 16:40</span>
+                        </strong><span class="Comment-date" th:text="${review.getTime()}">17.04.2020 16:40</span>
                     </div>
                 </header>
                 <div class="Comment-content">
                     <div class="Spoiler">
                         <div class="Spoiler-visible">
-                            <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit doli. Aenean commodo ligula eget
+                            <p th:text="${review.getShowText()}">Lorem ipsum dolor sit amet, consectetuer adipiscing elit doli. Aenean commodo ligula eget
                                 dolor. Aenean massa. Cumtipsu sociis natoque penatibus et magnis dis parturient
                                 montesti,
                                 nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eutu, pretiumem.
@@ -155,8 +71,8 @@
                                 vitae.
                             </p>
                         </div>
-                        <div class="Spoiler-hide">
-                            <p>Первая книга - сборник повестей и рассказов "Большой поток" - посвящена людям
+                        <div class="Spoiler-hide" th:if="${review.getHideText().length() > 0}">
+                            <p th:text="${review.getHideText()}">Первая книга - сборник повестей и рассказов "Большой поток" - посвящена людям
                                 леспромхоза.
                                 Автор книг "Рассказы" (1954), "Неразменное счастье. Повести и рассказы" (1962). Наиболее
                                 известная его повесть "Девчата" (1961) переведена на пятнадцать языков. По написанному
@@ -164,20 +80,20 @@
                                 сценарию был поставлен одноименный фильм, до сих пор имеющий огромный успех.
                             </p>
                         </div>
-                        <div class="Comment-footer">
+                        <div class="Comment-footer" th:if="${authorized}">
                             <div class="Comment-appeal">
                                 <button class="btn btn_white btn_like" data-btntype="check" data-check="false"
-                                        data-btnradio="one1" data-likeid="333"><span class="btn-icon"><img
+                                        data-btnradio="one1" th:attr="data-likeid=${review.getId()}" ><span class="btn-icon"><img
                                         src="/assets/img/icons/comment/like.svg" alt="like.svg"/></span><span
-                                        class="btn-content">500</span>
+                                        class="btn-content" th:text="${review.getPosLikeCount()}">500</span>
                                 </button>
                                 <button class="btn btn_white btn_dislike" data-btntype="check" data-check="false"
-                                        data-btnradio="one1" data-likeid="333"><span class="btn-icon"><img
+                                        data-btnradio="one1" th:attr="data-likeid=${review.getId()}"><span class="btn-icon"><img
                                         src="/assets/img/icons/comment/dislike.svg" alt="dislike.svg"/></span><span
-                                        class="btn-content">50</span>
+                                        class="btn-content" th:text="${review.getNegLikeCount()}">50</span>
                                 </button>
                             </div>
-                            <button class="Spoiler-trigger btn btn_primary btn_nr" type="button"
+                            <button th:if="${review.getHideText().length() > 0}" class="Spoiler-trigger btn btn_primary btn_nr" type="button"
                                     data-showtext="Свернуть отзыв" data-hidetext="Показать отзыв полностью">
                             </button>
                         </div>

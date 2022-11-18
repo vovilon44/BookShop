@@ -16,9 +16,11 @@
     <link rel="stylesheet" href="/assets/css/extra.min.css?v=87821122">
     <link rel="stylesheet" href="/assets/css/DownloadBookWindowStyle.css">
     <script defer src="/assets/js/scripts.min.js?v=87821122"></script>
+<!--    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}">-->
+<!--    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}">-->
 </head>
 <body class="Site">
-<header class="Header" th:replace="~{fragments/common_header_fragment :: head(main='menu-item',status='unauthorized')}"></header>
+<header class="Header" th:replace="~{fragments/common_header_fragment :: head(main='menu-item',status=${authorized} ? 'authorized' : 'unauthorized')}"></header>
 <div class="Middle">
     <div class="wrap">
         <main class="Middle-main">
@@ -39,11 +41,65 @@
                     </div>
                     <div class="ProductCard-desc" th:replace="~{fragments/book_description_fragment :: bookDesc}"></div>
                 </div>
-                <div class="Product-comments">
-                    <div class="Product-comments-header">
-                        <h3 class="Product-comments-title">Отзывы
-                        </h3><span class="Product-comments-amount">567 отзывов</span>
+                    <div class="Product-comments" th:if="${!isReviewEmpty}">
+                        <div class="Product-comments-header">
+                            <h3 class="Product-comments-title">Отзывы
+                            </h3><span class="Rating"><span class="Rating-stars" th:if="${authorized}"><span th:attr="ave=${book.getBookRatingReviews()}" th:class="'Rating-star' + (${book.getBookRatingReviews() >= 0.2} ? 'Rating-star_view' : '')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
+                      <g>
+                        <g>
+                          <path fill="#ffc000"
+                                d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
+                        </g>
+                      </g>
+                    </svg></span><span th:class="'Rating-star' + (${book.getBookRatingReviews() >= 0.4} ? 'Rating-star_view' : '')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
+                      <g>
+                        <g>
+                          <path fill="#ffc000"
+                                d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
+                        </g>
+                      </g>
+                    </svg></span><span th:class="'Rating-star' + (${book.getBookRatingReviews() >= 0.6} ? 'Rating-star_view' : '')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
+                      <g>
+                        <g>
+                          <path fill="#ffc000"
+                                d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
+                        </g>
+                      </g>
+                    </svg></span><span th:class="'Rating-star' + (${book.getBookRatingReviews() >= 0.8} ? 'Rating-star_view' : '')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
+                      <g>
+                        <g>
+                          <path fill="#ffc000"
+                                d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
+                        </g>
+                      </g>
+                    </svg></span><span th:class="'Rating-star' + (${book.getBookRatingReviews() == 1} ? 'Rating-star_view' : '')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
+                      <g>
+                        <g>
+                          <path fill="#ffc000"
+                                d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
+                        </g>
+                      </g>
+                    </svg></span></span><span class="Rating-title" th:text="${reviewsBook.size() + ' отзыв' + (reviewsBook.size() % 10 == 1 && reviewsBook.size() % 100 != 11 ? '' : (reviewsBook.size() % 10 > 1 && reviewsBook.size() % 10 < 5 && (reviewsBook.size() < 10 || reviewsBook.size() > 20) ? 'а' : 'ов'))}">567 отзывов</span></span>
+                        </div>
                     </div>
+                <strong class="Comments-title" th:if="${authorized}">Написать отзыв
+                </strong>
+                <div class="Comments-addComment" th:if="${authorized}">
+                    <form class="form" action="#" method="post" th:attr="data-bookid=${book.getSlug()}">
+                        <div class="form-group">
+                                <textarea class="form-textarea Comments-review" name="review" id="review"
+                                          placeholder="Текст отзыва" data-validate="require"></textarea>
+                        </div>
+                        <div class="form-group Comments-sendReview">
+                            <button class="btn btn_warning" type="submit">Отправить отзыв
+                            </button>
+                        </div>
+                    </form>
                 </div>
                 <div th:replace="~{fragments/book_reviews_fragment :: reviewBlock}"></div>
             </div>

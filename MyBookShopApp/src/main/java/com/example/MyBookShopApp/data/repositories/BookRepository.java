@@ -1,5 +1,6 @@
-package com.example.MyBookShopApp.data;
+package com.example.MyBookShopApp.data.repositories;
 
+import com.example.MyBookShopApp.data.Book;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,6 +28,8 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     Page<Book> findAllByTitleContains(String searchText, Pageable page);
 
     List<Book> findBooksBySlugIn(String[] slugs);
+
+    List<Book> findBooksByBook2UserEntityList_TypeIdAndBook2UserEntityList_User_Email(Integer type, String email);
 
 
 

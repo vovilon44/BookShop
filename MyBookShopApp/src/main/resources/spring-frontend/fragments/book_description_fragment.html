@@ -98,7 +98,7 @@
                                             d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
                                     </g>
                                   </g>
-                                </svg></span></span><span class="Rating-title" th:text="${book.getBookLikeMap().get(1)}">1</span></span><br><span
+                                </svg></span></span><span class="Rating-title" th:text="${book.getBookLikeMap().get(5)}">1</span></span><br><span
                                 class="Rating"><span class="Rating-stars"><span
                                 class="Rating-star Rating-star_view">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
@@ -140,7 +140,7 @@
                                             d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
                                     </g>
                                   </g>
-                                </svg></span></span><span class="Rating-title" th:text="${book.getBookLikeMap().get(2)}">4</span></span><br><span
+                                </svg></span></span><span class="Rating-title" th:text="${book.getBookLikeMap().get(4)}">4</span></span><br><span
                                 class="Rating"><span class="Rating-stars"><span
                                 class="Rating-star Rating-star_view">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
@@ -224,7 +224,7 @@
                                             d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
                                     </g>
                                   </g>
-                                </svg></span></span><span class="Rating-title" th:text="${book.getBookLikeMap().get(4)}">10</span></span><br><span class="Rating"><span
+                                </svg></span></span><span class="Rating-title" th:text="${book.getBookLikeMap().get(2)}">10</span></span><br><span class="Rating"><span
                                 class="Rating-stars"><span class="Rating-star Rating-star_view">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
                                   <g>
@@ -265,7 +265,7 @@
                                             d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
                                     </g>
                                   </g>
-                                </svg></span></span><span class="Rating-title" th:text="${book.getBookLikeMap().get(5)}">3</span></span>
+                                </svg></span></span><span class="Rating-title" th:text="${book.getBookLikeMap().get(1)}">3</span></span>
                         </div>
                     </div>
                 </div>
@@ -327,7 +327,7 @@
                 href="/tags/" th:each="tag, stat : ${tags}" th:text="#{${tag.name}} + (${stat.last} ? '' : ',&nbsp;')"></a>
         </div>
         <div class="ProductCard-cost"><span class="ProductCard-titleProp">Цена:</span><span
-                class="ProductCard-priceOld" th:text="${book.discount} ? ${book.price} : ''">₽300</span><span class="ProductCard-price" th:text="${book.price - (book.price * book.discount)}">₽180</span>
+                class="ProductCard-priceOld" th:text="${book.discount} ? ${book.price} : ''">₽300</span><span class="ProductCard-price" th:text="${#numbers.formatDecimal(book.price - (book.discount * book.price),1,2)}">₽180</span>
         </div>
     </div>
     <div class="ProductCard-text" th:text="${book.description}">
@@ -349,7 +349,7 @@
         {
             if (![[${isBookRatingEmpty}]]){
                 let rat = [[${bookRating}]] - 1
-                 rating[rat - 1].checked=true;
+                 rating[rat].checked=true;
 
             }
         }
