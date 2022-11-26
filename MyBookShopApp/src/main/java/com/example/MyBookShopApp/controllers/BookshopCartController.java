@@ -88,8 +88,14 @@ public class BookshopCartController {
     }
 
     @PostMapping("/changeBookStatus/cart/remove/{slug}")
-    public String handleRemoveBookFromCartRequest(@PathVariable("slug") String slug, @CookieValue(name = "cartContents", required = false) String cartContents, HttpServletResponse response, Model model) {
-        if (cartContents != null && !cartContents.equals("")) {
+    public String handleRemoveBookFromCartRequest(@PathVariable("slug") String slug,
+                                                  @CookieValue(name = "cartContents", required = false) String cartContents,
+                                                  @CookieValue(name = "token", required = false) String token,
+                                                  HttpServletResponse response, Model model) throws BookstoreApiWrongParameterException
+    {
+        if (token != null){
+            book2UserService.removeBook2User(slug, 2);
+        } else if (cartContents != null && !cartContents.equals("")) {
             ArrayList<String> cookieBooks = new ArrayList<>(Arrays.asList(cartContents.split("/")));
             cookieBooks.remove(slug);
             Cookie cookie = new Cookie("cartContents", String.join("/", cookieBooks));
@@ -103,8 +109,14 @@ public class BookshopCartController {
     }
 
     @PostMapping("/changeBookStatus/kept/remove/{slug}")
-    public String handleRemoveBookFromKeptRequest(@PathVariable("slug") String slug, @CookieValue(name = "keptContents", required = false) String keptContents, HttpServletResponse response, Model model) {
-        if (keptContents != null && !keptContents.equals("")) {
+    public String handleRemoveBookFromKeptRequest(@PathVariable("slug") String slug,
+                                                  @CookieValue(name = "keptContents", required = false) String keptContents,
+                                                  @CookieValue(name = "token", required = false) String token,
+                                                  HttpServletResponse response, Model model) throws BookstoreApiWrongParameterException
+    {
+        if (token != null){
+            book2UserService.removeBook2User(slug, 1);
+        } else if (keptContents != null && !keptContents.equals("")) {
             ArrayList<String> cookieBooks = new ArrayList<>(Arrays.asList(keptContents.split("/")));
             cookieBooks.remove(slug);
             Cookie cookie = new Cookie("keptContents", String.join("/", cookieBooks));
@@ -124,17 +136,39 @@ public class BookshopCartController {
                                          @CookieValue(name = "token", required = false) String token,
                                          @RequestBody BookStatusDto bookStatusDto, HttpServletResponse response, Model model) throws BookstoreApiWrongParameterException {
         if (token != null && bookStatusDto.getStatus() != null && bookStatusDto.getStatus() != "") {
-            book2UserService.addBook2User(slug, bookStatusDto.getStatus().equals("KEPT") ? 2 : 1);
+            book2UserService.addBook2User(slug, bookStatusDto.getStatus().equals("KEPT") ? 1 : 2);
         } else {
             if (bookStatusDto.getStatus() != null){
                 switch (bookStatusDto.getStatus()){
                     case ("KEPT"):
-                        response.addCookie(book2UserService.addBook2UserFromCookie(slug, keptContents, "keptContents"));
-                        model.addAttribute("isKeptEmpty");
+                        if (keptContents == null || keptContents.equals("")){
+                            Cookie cookie = new Cookie("keptContents", slug);
+                            cookie.setPath("/books");
+                            response.addCookie(cookie);
+                            model.addAttribute("isKeptEmpty", false);
+                        } else if (!keptContents.contains(slug)) {
+                            StringJoiner stringJoiner = new StringJoiner("/");
+                            stringJoiner.add(keptContents).add(slug);
+                            Cookie cookie = new Cookie("keptContents", stringJoiner.toString());
+                            cookie.setPath("/books");
+                            response.addCookie(cookie);
+                            model.addAttribute("isKeptEmpty", false);
+                        }
                         break;
                     case ("CART"):
-                        response.addCookie(book2UserService.addBook2UserFromCookie(slug, cartContents, "cartContents"));
-                        model.addAttribute("isCartEmpty");
+                        if (cartContents == null || cartContents.equals("")){
+                            Cookie cookie = new Cookie("cartContents", slug);
+                            cookie.setPath("/books");
+                            response.addCookie(cookie);
+                            model.addAttribute("isCartEmpty", false);
+                        } else if (!cartContents.contains(slug)){
+                            StringJoiner stringJoiner = new StringJoiner("/");
+                            stringJoiner.add(cartContents).add(slug);
+                            Cookie cookie = new Cookie("cartContents", stringJoiner.toString());
+                            cookie.setPath("/books");
+                            response.addCookie(cookie);
+                            model.addAttribute("isCartEmpty", false);
+                        }
                         break;
                 }
             }
@@ -168,7 +202,17 @@ public class BookshopCartController {
                     response.addCookie(cookie);
 
                 } else {
-                    response.addCookie(book2UserService.addBook2UserFromCookie(slug, booksRating, "booksRating"));
+                    if (booksRating == null || booksRating.equals("")){
+                        Cookie cookie = new Cookie("booksRating", slug + "=" + bookRatingDto.getValue());
+                        cookie.setPath("/books");
+                        response.addCookie(cookie);
+                    } else if (!booksRating.contains(slug)) {
+                        StringJoiner stringJoiner = new StringJoiner("/");
+                        stringJoiner.add(booksRating).add(slug + "=" + bookRatingDto.getValue());
+                        Cookie cookie = new Cookie("booksRating", stringJoiner.toString());
+                        cookie.setPath("/books");
+                        response.addCookie(cookie);
+                    }
                 }
             }
         }

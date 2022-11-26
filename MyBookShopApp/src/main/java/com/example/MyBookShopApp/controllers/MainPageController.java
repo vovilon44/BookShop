@@ -1,13 +1,17 @@
 package com.example.MyBookShopApp.controllers;
 
-import com.example.MyBookShopApp.data.*;
+import com.example.MyBookShopApp.data.Book;
+import com.example.MyBookShopApp.data.SearchWordDto;
+import com.example.MyBookShopApp.data.TagWithRangDto;
 import com.example.MyBookShopApp.data.services.BookService;
 import com.example.MyBookShopApp.data.services.TagService;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
 import com.example.MyBookShopApp.errs.EmptySearchException;
+import com.example.MyBookShopApp.security.jwt.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,13 +24,16 @@ public class MainPageController {
 
     private final BookService bookService;
     private final TagService tagService;
+    private final JWTUtil jwtUtil;
+
 
 
 
     @Autowired
-    public MainPageController(BookService bookService, TagService tagService) {
+    public MainPageController(BookService bookService, TagService tagService, JWTUtil jwtUtil) {
         this.bookService = bookService;
         this.tagService = tagService;
+        this.jwtUtil = jwtUtil;
     }
 
 
@@ -43,8 +50,12 @@ public class MainPageController {
 
 
     @ModelAttribute("recommendedBooks")
-    public List<Book> recommendedBooks(){
-        return bookService.getPageOfRecommendedBooks(0,6).getContent();
+    public List<Book> recommendedBooks(@CookieValue(value = "token", required = false) String token, Model model){
+        if (token != null && !jwtUtil.isTokenExpired(token)){
+
+            return bookService.getPageOfRecommendedBooksAuthorized(0, 6, "lcodner1@email.ru");
+        }
+        return bookService.getPageOfRecommendedBooks(0,6);
     }
 
     @ModelAttribute("recentBooks")

@@ -10,8 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.StringJoiner;
+import java.util.*;
 
 @Service
 public class Book2UserService
@@ -42,20 +41,16 @@ public class Book2UserService
 
     }
 
-    public Cookie addBook2UserFromCookie(String slug, String content,String cookieName){
-        if (content == null || content.equals("")){
-            Cookie cookie = new Cookie(cookieName, slug);
-            cookie.setPath("/books");
-            return cookie;
-        } else if (!content.contains(slug)){
-            StringJoiner stringJoiner = new StringJoiner("/");
-            stringJoiner.add(content).add(slug);
-            Cookie cookie = new Cookie(cookieName, stringJoiner.toString());
-            cookie.setPath("/books");
-            return cookie;
-        } else {
-            return new Cookie(cookieName, content);
+    public void removeBook2User(String slug,Integer type) throws BookstoreApiWrongParameterException {
+        Book2UserEntity book2User = book2UserRepository.findBook2UserEntityByBook_SlugAndUser_EmailAndTypeId(slug, userRegister.getCurrentUser().getEmail(), type);
+        if (book2User != null) {
+            book2UserRepository.delete(book2User);
         }
+    }
+
+    public Book2UserEntity getBook2UserCart(String slug, String email) throws BookstoreApiWrongParameterException {
+        return book2UserRepository.findBook2UserEntitiesByBook_SlugAndUser_EmailAndTypeIdIs(slug, email, 2);
+
     }
 
 

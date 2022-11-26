@@ -19,7 +19,12 @@ public class BookstoreUserDetailsService implements UserDetailsService
 
     @Override
     public BookstoreUserDetails loadUserByUsername(String s) {
-        BookstoreUser bookstoreUser = bookstoreUserRepository.findBookstoreUserByEmail(s);
+        BookstoreUser bookstoreUser;
+        if (s.startsWith("+")){
+            bookstoreUser = bookstoreUserRepository.findBookstoreUserByPhone(s);
+        } else {
+            bookstoreUser = bookstoreUserRepository.findBookstoreUserByEmail(s);
+        }
         if (bookstoreUser != null){
             return new BookstoreUserDetails(bookstoreUser);
         } else {

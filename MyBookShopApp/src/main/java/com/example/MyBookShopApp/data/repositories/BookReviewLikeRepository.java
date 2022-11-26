@@ -8,4 +8,6 @@ import java.util.List;
 public interface BookReviewLikeRepository extends JpaRepository<BookReviewLikeEntity, Integer>
 {
     BookReviewLikeEntity findByReview_IdAndUser_Email(Integer reviewId, String email);
+
+    List<BookReviewLikeEntity> findByReview_Id(Integer reviewId);
 }

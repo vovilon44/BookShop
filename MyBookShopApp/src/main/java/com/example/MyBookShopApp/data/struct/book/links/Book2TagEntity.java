@@ -58,4 +58,13 @@ public class Book2TagEntity {
     public void setTag(TagEntity tag) {
         this.tag = tag;
     }
+
+    @Override
+    public String toString() {
+        return "Book2TagEntity{" +
+                "id=" + id +
+                ", book=" + book.getTitle() +
+                ", tag=" + tag.getName() +
+                '}';
+    }
 }

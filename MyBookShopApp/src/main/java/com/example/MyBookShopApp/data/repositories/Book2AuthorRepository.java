@@ -8,4 +8,6 @@ import java.util.List;
 public interface Book2AuthorRepository extends JpaRepository<Book2AuthorEntity, Integer> {
 
     List<Book2AuthorEntity> findBook2AuthorEntityByBook_IdIs(Integer id);
+
+
 }

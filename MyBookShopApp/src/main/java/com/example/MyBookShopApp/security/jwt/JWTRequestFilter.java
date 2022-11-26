@@ -37,6 +37,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
+
         String token = null;
         String username = null;
         Cookie[] cookies = httpServletRequest.getCookies();

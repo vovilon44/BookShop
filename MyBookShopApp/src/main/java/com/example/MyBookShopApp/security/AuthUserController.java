@@ -56,8 +56,12 @@ public class AuthUserController
     @PostMapping("/reg")
     public String handleUserRegistration(RegistrationForm registrationForm, Model model)
     {
-        userRegister.registerNewUser(registrationForm);
-        model.addAttribute("regOk", true);
+        if (userRegister.registerNewUser(registrationForm) != null){
+            model.addAttribute("regOk", true);
+        } else {
+            model.addAttribute("regOk", false);
+        }
+
         return "signin";
     }
 

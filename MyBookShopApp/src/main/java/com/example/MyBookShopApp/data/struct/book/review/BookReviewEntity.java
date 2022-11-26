@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -29,7 +30,7 @@ public class BookReviewEntity {
     private BookstoreUser user;
 
     @Column(columnDefinition = "DATE NOT NULL")
-    private LocalDate time;
+    private Date time;
 
     @Column(columnDefinition = "TEXT NOT NULL")
     private String text;
@@ -78,6 +79,10 @@ public class BookReviewEntity {
         return ((double) bookReviewLikeEntityList.stream().filter(e -> e.getValue() > 0).count()) / bookReviewLikeEntityList.size();
     }
 
+    public Integer getRang() {
+        return bookReviewLikeEntityList.stream().reduce(0, (x, e)-> x+e.getValue(), (x, e) -> x+e) ;
+    }
+
     public int getId() {
         return id;
     }
@@ -103,11 +108,11 @@ public class BookReviewEntity {
         this.user = user;
     }
 
-    public LocalDate getTime() {
+    public Date getTime() {
         return time;
     }
 
-    public void setTime(LocalDate time) {
+    public void setTime(Date time) {
         this.time = time;
     }
 
@@ -135,7 +140,8 @@ public class BookReviewEntity {
                 ", user=" + user.getName() +
                 ", time=" + time + + '\'' +
                 ", textShow='" + getShowText() + "\' \n" +
-                " textHide='" + getHideText() + '\'' +
+                ", rang =" + getRang() +
+                "rating=" + getRating() +
                 ", bookReviewLikeEntityList=" + bookReviewLikeEntityList +
                 '}';
     }

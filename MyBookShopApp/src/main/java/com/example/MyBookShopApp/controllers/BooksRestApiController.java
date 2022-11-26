@@ -27,7 +27,7 @@ public class BooksRestApiController {
     @GetMapping("/books/recommended")
     public ResponseEntity<ApiResponse<BooksPageDto>> getRecommendedBooks(@RequestParam("offset") Integer offset, @RequestParam("limit") Integer limit)
     {
-        return ResponseEntity.ok(bookService.getResponseBooks(bookService.getPageOfRecommendedBooks(offset, limit).getContent()));
+        return ResponseEntity.ok(bookService.getResponseBooks(bookService.getPageOfRecommendedBooks(offset, limit)));
     }
 
     @GetMapping("/books/recent")

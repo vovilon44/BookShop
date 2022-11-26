@@ -74,8 +74,8 @@ public class Book2AuthorEntity {
     public String toString() {
         return "Book2AuthorEntity{" +
                 "id=" + id +
-                ", book=" + book +
-                ", author=" + author +
+                ", book=" + book.getTitle() +
+                ", author=" + author.getName() +
                 ", sortIndex=" + sortIndex +
                 '}';
     }
