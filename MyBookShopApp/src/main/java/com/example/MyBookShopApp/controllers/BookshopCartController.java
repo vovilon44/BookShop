@@ -1,5 +1,6 @@
 package com.example.MyBookShopApp.controllers;
 
+import com.example.MyBookShopApp.aspects.CookieCartKeptChanges;
 import com.example.MyBookShopApp.data.Book;
 import com.example.MyBookShopApp.data.BookRatingDto;
 import com.example.MyBookShopApp.data.BookStatusDto;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.logging.Logger;
 
 @Controller
 @RequestMapping("/books")
@@ -135,41 +137,27 @@ public class BookshopCartController {
                                          @CookieValue(name = "keptContents", required = false) String keptContents,
                                          @CookieValue(name = "token", required = false) String token,
                                          @RequestBody BookStatusDto bookStatusDto, HttpServletResponse response, Model model) throws BookstoreApiWrongParameterException {
+        Logger.getLogger("CartController.....").info("cartContents: " + cartContents);
         if (token != null && bookStatusDto.getStatus() != null && bookStatusDto.getStatus() != "") {
             book2UserService.addBook2User(slug, bookStatusDto.getStatus().equals("KEPT") ? 1 : 2);
         } else {
             if (bookStatusDto.getStatus() != null){
                 switch (bookStatusDto.getStatus()){
-                    case ("KEPT"):
-                        if (keptContents == null || keptContents.equals("")){
-                            Cookie cookie = new Cookie("keptContents", slug);
-                            cookie.setPath("/books");
-                            response.addCookie(cookie);
-                            model.addAttribute("isKeptEmpty", false);
-                        } else if (!keptContents.contains(slug)) {
-                            StringJoiner stringJoiner = new StringJoiner("/");
-                            stringJoiner.add(keptContents).add(slug);
-                            Cookie cookie = new Cookie("keptContents", stringJoiner.toString());
-                            cookie.setPath("/books");
-                            response.addCookie(cookie);
-                            model.addAttribute("isKeptEmpty", false);
-                        }
+                    case ("KEPT"): {
+                        Cookie cookie = new Cookie("keptContents", keptContents);
+                        cookie.setPath("/books");
+                        response.addCookie(cookie);
+                        model.addAttribute("isKeptEmpty", false);
                         break;
-                    case ("CART"):
-                        if (cartContents == null || cartContents.equals("")){
-                            Cookie cookie = new Cookie("cartContents", slug);
-                            cookie.setPath("/books");
-                            response.addCookie(cookie);
-                            model.addAttribute("isCartEmpty", false);
-                        } else if (!cartContents.contains(slug)){
-                            StringJoiner stringJoiner = new StringJoiner("/");
-                            stringJoiner.add(cartContents).add(slug);
-                            Cookie cookie = new Cookie("cartContents", stringJoiner.toString());
-                            cookie.setPath("/books");
-                            response.addCookie(cookie);
-                            model.addAttribute("isCartEmpty", false);
-                        }
+                    }
+                    case ("CART"): {
+                        Cookie cookie = new Cookie("cartContents", cartContents);
+                        cookie.setPath("/books");
+                        response.addCookie(cookie);
+                        model.addAttribute("isCartEmpty", false);
+
                         break;
+                    }
                 }
             }
         }
