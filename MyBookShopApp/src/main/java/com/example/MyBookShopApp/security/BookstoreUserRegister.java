@@ -1,5 +1,7 @@
 package com.example.MyBookShopApp.security;
 
+import com.example.MyBookShopApp.data.ChangeUserEntity;
+import com.example.MyBookShopApp.data.repositories.ChangeUserRepository;
 import com.example.MyBookShopApp.security.jwt.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class BookstoreUserRegister
 {
@@ -19,14 +23,17 @@ public class BookstoreUserRegister
 
     private final BookstoreUserDetailsService bookstoreUserDetailsService;
 
+    private final ChangeUserRepository changeUserRepository;
+
     private final JWTUtil jwtUtil;
 
     @Autowired
-    public BookstoreUserRegister(BookstoreUserRepository bookstoreUserRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, BookstoreUserDetailsService bookstoreUserDetailsService, JWTUtil jwtUtil) {
+    public BookstoreUserRegister(BookstoreUserRepository bookstoreUserRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, BookstoreUserDetailsService bookstoreUserDetailsService, ChangeUserRepository changeUserRepository, JWTUtil jwtUtil) {
         this.bookstoreUserRepository = bookstoreUserRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.bookstoreUserDetailsService = bookstoreUserDetailsService;
+        this.changeUserRepository = changeUserRepository;
         this.jwtUtil = jwtUtil;
     }
 
@@ -120,4 +127,27 @@ public class BookstoreUserRegister
             return false;
         }
     }
+
+    public void saveChangedUser(ChangeUserEntity changeUser)
+    {
+        changeUserRepository.save(changeUser);
+    }
+
+    public boolean changeUser(String code)
+    {
+        ChangeUserEntity changeUser = changeUserRepository.findByCodeIs(code);
+        if (changeUser != null && changeUser.getExpairedTime().isAfter(LocalDateTime.now())){
+            BookstoreUser bookstoreUser = bookstoreUserRepository.findBookstoreUserByEmail(getCurrentUser().getEmail());
+            bookstoreUser.setEmail(changeUser.getEmail());
+            bookstoreUser.setName(changeUser.getName());
+            bookstoreUser.setPhone(changeUser.getPhone());
+            bookstoreUserRepository.save(bookstoreUser);
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+
 }

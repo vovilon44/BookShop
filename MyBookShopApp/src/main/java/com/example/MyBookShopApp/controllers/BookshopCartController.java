@@ -226,14 +226,6 @@ public class BookshopCartController {
         return "redirect:/books/" + slug;
     }
 
-//    @GetMapping("/pay")
-//    public RedirectView handlePay(@CookieValue(value = "cartContents", required = false) String cartContents, @CookieValue(name = "token", required = false) String token) throws NoSuchAlgorithmException {
-//        Logger.getLogger("cartController").info("dfsd");
-//            List<Book> books = bookService.getBooksInCart(2);
-//            String paymentUrl = paymentService.getPaymentUrl(444444);
-//            return new RedirectView(paymentUrl);
-//    }
-
     @GetMapping("/pay")
     public String handleOrder(@CookieValue(name = "token", required = false) String token, Model model) throws NoSuchAlgorithmException {
         if (book2UserService.payBooks()) {

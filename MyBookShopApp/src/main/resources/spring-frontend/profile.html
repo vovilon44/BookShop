@@ -87,8 +87,10 @@
                                                 <button class="btn btn_primary" type="submit">Сохранить
                                                 </button>
                                             </div>
-                                            <div th:if="${userEdit}" class="Profile-success">Профиль успешно сохранен
-                                            </div>
+                                            <div th:if="${userEditFailed}" class="Profile-success">Произошла ошибка во время изменения учетной записи</div>
+                                            <div th:if="${passwordChanged}" class="Profile-success">Новый пароль успешно сохранен</div>
+                                            <div th:if="${passwordChangedFailed}" class="Profile-success">Произошла ошибка во время смены пароля</div>
+                                            <div th:if="${userWait}" class="Profile-success">На почту выслано сообщение с дальнейшими инструкциями</div>
                                         </div>
                                     </div>
                                 </div>

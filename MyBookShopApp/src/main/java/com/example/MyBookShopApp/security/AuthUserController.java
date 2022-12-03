@@ -1,5 +1,6 @@
 package com.example.MyBookShopApp.security;
 
+import com.example.MyBookShopApp.data.ChangeUserEntity;
 import com.example.MyBookShopApp.data.SearchWordDto;
 import com.example.MyBookShopApp.data.SmsCode;
 import com.example.MyBookShopApp.data.services.Book2UserService;
@@ -17,6 +18,8 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
+import java.util.Random;
 
 @Controller
 public class AuthUserController
@@ -30,17 +33,15 @@ public class AuthUserController
     private final Book2UserService book2UserService;
     private final PaymentService paymentService;
 
-    private final BookstoreUserRegister bookstoreUserRegister;
 
     @Autowired
-    public AuthUserController(BookstoreUserRegister userRegister, JavaMailSender javaMailSender, SmsService smsService, BookService bookService, Book2UserService book2UserService, PaymentService paymentService, BookstoreUserRegister bookstoreUserRegister) {
+    public AuthUserController(BookstoreUserRegister userRegister, JavaMailSender javaMailSender, SmsService smsService, BookService bookService, Book2UserService book2UserService, PaymentService paymentService) {
         this.userRegister = userRegister;
         this.javaMailSender = javaMailSender;
         this.smsService = smsService;
         this.bookService = bookService;
         this.book2UserService = book2UserService;
         this.paymentService = paymentService;
-        this.bookstoreUserRegister = bookstoreUserRegister;
     }
 
     @ModelAttribute("searchWordDto")
@@ -147,7 +148,6 @@ public class AuthUserController
     public String handleProfile(Model model)
     {
         model.addAttribute("transactions", book2UserService.getTransactions());
-        model.addAttribute("userEdit", false);
         model.addAttribute("curUsr", userRegister.getCurrentUser());
         return "profile";
     }
@@ -172,15 +172,72 @@ public class AuthUserController
 //    }
 
     @PostMapping("/profile/edit")
-    public String handleUserRegistration(RegistrationFormEditDto registrationForm, Model model)
+    public String handleUserEdit(RegistrationFormEditDto registrationForm, Model model, @CookieValue(name = "token", required = false) String token)
     {
-        if (registrationForm.getPassword().equals(registrationForm.getPasswordReply()) &&
-                bookstoreUserRegister.changePassForUser(registrationForm.getPassword())){
-            model.addAttribute("userEdit", true);
-        } else {
-            model.addAttribute("userEdit", false);
+        if (token != null) {
+            if (registrationForm.getPassword().equals(registrationForm.getPasswordReply()) &&
+                    registrationForm.getMail().equals(userRegister.getCurrentUser().getEmail()) &&
+                    registrationForm.getName().equals(userRegister.getCurrentUser().getName()) &&
+                    registrationForm.getPhone().equals(userRegister.getCurrentUser().getPhone())) {
+                if (userRegister.changePassForUser(registrationForm.getPassword())) {
+                    model.addAttribute("transactions", book2UserService.getTransactions());
+                    model.addAttribute("curUsr", userRegister.getCurrentUser());
+                    model.addAttribute("passwordChanged", true);
+                    return "/profile";
+                }
+                model.addAttribute("transactions", book2UserService.getTransactions());
+                model.addAttribute("curUsr", userRegister.getCurrentUser());
+                model.addAttribute("passwordChangedFailed", true);
+                return "/profile";
+            } else {
+                Random random = new Random();
+                StringBuilder sb = new StringBuilder();
+                while (sb.length() < 3){
+                    sb.append(random.nextInt(9));
+                }
+                String urlForMessage = "http://localhost:8085/profile/" + sb + token;
+
+                ChangeUserEntity changeUser =new ChangeUserEntity();
+                changeUser.setCode(sb.toString());
+                changeUser.setEmail(registrationForm.getMail() != null ? registrationForm.getMail() : userRegister.getCurrentUser().getEmail());
+                changeUser.setName(registrationForm.getName() != null ? registrationForm.getName() : userRegister.getCurrentUser().getName());
+                changeUser.setPhone(registrationForm.getPhone() != null ? registrationForm.getPhone() : userRegister.getCurrentUser().getPhone());
+                changeUser.setExpairedTime(LocalDateTime.now().plusSeconds(300));
+                userRegister.saveChangedUser(changeUser);
+
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setFrom("belialpw2@bk.ru");
+                message.setTo(changeUser.getEmail());
+
+                message.setSubject("Bookstore email verification");
+                message.setText("For change account direct: " + urlForMessage);
+                javaMailSender.send(message);
+                model.addAttribute("transactions", book2UserService.getTransactions());
+                model.addAttribute("curUsr", userRegister.getCurrentUser());
+                model.addAttribute("userWait", true);
+                return "/profile";
+            }
         }
         return "redirect:/profile";
+    }
+
+    @GetMapping("/profile/{tokenApprove}")
+    public String handleUserEditConfirm(@PathVariable String tokenApprove, @CookieValue(name = "token", required = false) String token, Model model)
+    {
+        if (token != null) {
+            if (tokenApprove.substring(3).equals(token)) {
+                if (userRegister.changeUser(tokenApprove.substring(0, 3))) {
+                    model.addAttribute("userEdit", true);
+                    return "/signin";
+                }
+            }
+            model.addAttribute("transactions", book2UserService.getTransactions());
+            model.addAttribute("curUsr", userRegister.getCurrentUser());
+            model.addAttribute("userEditFailed", true);
+            return "/profile";
+        } else {
+            return "redirect:/signin";
+        }
     }
 
 }
