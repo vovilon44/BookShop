@@ -13,6 +13,8 @@ public interface Book2UserRepository extends JpaRepository<Book2UserEntity, Inte
 
     Book2UserEntity findBook2UserEntitiesByBook_SlugAndUser_EmailAndTypeIdIs(String book, String email, Integer type);
 
+    List<Book2UserEntity> findBook2UserEntitiesByUser_EmailAndTypeIdIs(String email, Integer type);
+
 
 
 }

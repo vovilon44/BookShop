@@ -13,7 +13,7 @@
                         <div class="Card-picture">
                             <a th:href="@{'/books/' + ${book.slug}}"><img
                             th:src="${book.image}" alt="card.jpg"/></a>
-                            <div class="Card-sale" th:if="${book.discount} > 0" th:text="${#numbers.formatInteger(book.discount * 100,1)} +' % скидка'"></div>
+                            <div class="Card-sale" th:if="${book.discount} > 0.0" th:text="${#numbers.formatInteger(book.discount * 100,1)} +' % скидка'"></div>
                         <div class="Card-ribbon" th:if="${book.isBestseller}"><span class="Card-ribbonText">Бестселлер</span></div>
                         </div>
                         <div class="Card-content">

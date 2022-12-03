@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +35,10 @@ public class BookstoreUserRegister
 
     public BookstoreUser registerNewUser(RegistrationForm registrationForm)
     {
-        if(bookstoreUserRepository.findBookstoreUserByEmail(registrationForm.getEmail()) == null){
+        BookstoreUser userByEmail = bookstoreUserRepository.findBookstoreUserByEmail(registrationForm.getEmail());
+        BookstoreUser userByPhone = bookstoreUserRepository.findBookstoreUserByPhone(registrationForm.getPhone());
+
+        if(userByEmail == null && userByPhone == null){
             BookstoreUser user = new BookstoreUser();
             user.setName(registrationForm.getName());
             user.setEmail(registrationForm.getEmail());
@@ -42,8 +46,9 @@ public class BookstoreUserRegister
             user.setPassword(passwordEncoder.encode(registrationForm.getPass()));
             bookstoreUserRepository.save(user);
             return user;
+        } else {
+            return userByPhone;
         }
-        return null;
     }
 
     public ContactConfirmationResponse login(ContactConfirmationPayload payload)
@@ -64,8 +69,55 @@ public class BookstoreUserRegister
         return response;
     }
 
+    public ContactConfirmationResponse jwtLoginByPhoneNumber(ContactConfirmationPayload payload)
+    {
+        RegistrationForm registrationForm = new RegistrationForm();
+        registrationForm.setPhone(payload.getContact());
+        registrationForm.setPass(payload.getCode());
+        registerNewUser(registrationForm);
+        UserDetails userDetails = bookstoreUserDetailsService.loadUserByUsername(payload.getContact());
+        String jwtToken = jwtUtil.generateToken(userDetails);
+        ContactConfirmationResponse response = new ContactConfirmationResponse();
+        response.setResult(jwtToken);
+        return response;
+    }
+
     public BookstoreUser getCurrentUser() {
         BookstoreUserDetails userDetails = (BookstoreUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userDetails.getBookstoreUser();
+    }
+
+    public boolean changePassForUser(String newPass)
+    {
+        BookstoreUser bookstoreUser  = bookstoreUserRepository.findBookstoreUserByEmail(getCurrentUser().getEmail());
+        if (bookstoreUser != null){
+            bookstoreUser.setPassword(passwordEncoder.encode(newPass));
+            bookstoreUserRepository.save(bookstoreUser);
+            return true;
+        }
+        return false;
+    }
+
+    public Double getBalance()
+    {
+        BookstoreUser bookstoreUser  = bookstoreUserRepository.findBookstoreUserByEmail(getCurrentUser().getEmail());
+        if (bookstoreUser != null){
+            return bookstoreUser.getBalance();
+        } else {
+            return 0.0;
+        }
+    }
+
+
+    public boolean correctBalanceAfterPay(Double value)
+    {
+        BookstoreUser bookstoreUser = bookstoreUserRepository.findBookstoreUserByEmail(getCurrentUser().getEmail());
+        if (bookstoreUser != null) {
+            bookstoreUser.setBalance(bookstoreUser.getBalance() - value);
+            bookstoreUserRepository.save(bookstoreUser);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

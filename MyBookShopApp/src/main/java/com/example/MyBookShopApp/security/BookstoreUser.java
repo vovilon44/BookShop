@@ -1,12 +1,12 @@
 package com.example.MyBookShopApp.security;
 
+import com.example.MyBookShopApp.data.TransactionEntity;
 import com.example.MyBookShopApp.data.struct.book.file.FileDownloadEntity;
 import com.example.MyBookShopApp.data.struct.book.links.Book2UserEntity;
 import com.example.MyBookShopApp.data.struct.book.links.BookLike2UserEntity;
 import com.example.MyBookShopApp.data.struct.book.review.BookReviewEntity;
 import com.example.MyBookShopApp.data.struct.book.review.BookReviewLikeEntity;
 import com.example.MyBookShopApp.data.struct.book.review.MessageEntity;
-import com.example.MyBookShopApp.data.struct.payments.BalanceTransactionEntity;
 import com.example.MyBookShopApp.data.struct.user.UserContactEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -45,7 +45,7 @@ public class BookstoreUser
 
     @Transient
     @OneToMany(mappedBy = "user")
-    private List<BalanceTransactionEntity> balanceTransactionEntityList = new ArrayList<>();
+    private List<TransactionEntity> balanceTransactionEntityList = new ArrayList<>();
     @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<BookReviewEntity> bookReviewEntityList = new ArrayList<>();
@@ -142,11 +142,11 @@ public class BookstoreUser
         this.fileDownloadEntityList = fileDownloadEntityList;
     }
 
-    public List<BalanceTransactionEntity> getBalanceTransactionEntityList() {
+    public List<TransactionEntity> getBalanceTransactionEntityList() {
         return balanceTransactionEntityList;
     }
 
-    public void setBalanceTransactionEntityList(List<BalanceTransactionEntity> balanceTransactionEntityList) {
+    public void setBalanceTransactionEntityList(List<TransactionEntity> balanceTransactionEntityList) {
         this.balanceTransactionEntityList = balanceTransactionEntityList;
     }
 

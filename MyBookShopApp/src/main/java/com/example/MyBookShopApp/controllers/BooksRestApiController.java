@@ -78,7 +78,7 @@ public class BooksRestApiController {
     @GetMapping("/search/{searchText}")
     @ResponseBody
     public ResponseEntity<ApiResponse<BooksPageDto>> getSearchBooks(@RequestParam("offset") Integer offset, @RequestParam("limit") Integer limit, @PathVariable String searchText) throws BookstoreApiWrongParameterException {
-        return ResponseEntity.ok(bookService.getResponseBooks(bookService.getBooksBySearch(searchText,offset, limit).getContent()));
+        return ResponseEntity.ok(bookService.getResponseBooks(bookService.getPageOfGoogleBooksApiSearchResult(searchText,offset, limit)));
     }
 
 

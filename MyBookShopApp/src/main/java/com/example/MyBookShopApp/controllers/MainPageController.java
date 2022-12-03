@@ -84,7 +84,7 @@ public class MainPageController {
     public String SearchResultsPage(@PathVariable(value = "searchWord", required = false) SearchWordDto searchWordDto, Model model) throws BookstoreApiWrongParameterException, EmptySearchException {
         if (searchWordDto != null) {
             model.addAttribute("searchWordDto", searchWordDto);
-            model.addAttribute("books", bookService.getBooksBySearch(searchWordDto.getExample(), 0, 20).getContent());
+            model.addAttribute("books", bookService.getPageOfGoogleBooksApiSearchResult(searchWordDto.getExample(), 0, 5));
             return "/search/index";
         } else {
             throw new EmptySearchException("Поиск по null невозможен");

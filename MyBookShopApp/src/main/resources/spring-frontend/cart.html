@@ -110,15 +110,16 @@
                         </div>
                     </div>
                 </div>
-                <div class="Cart-total" th:if="${!isCartEmpty}">
+                <div class="Cart-total" th:if="${bookCart.size() > 0}">
                     <div class="Cart-block Cart-block_total">
                         <strong class="Cart-title" th:text="#{total.price}">Итого:
                         </strong><span class="Cart-price">534 р.</span><span class="Cart-price_old">658 р.</span>
                     </div>
-                    <div class="Cart-block"><a class="btn btn_success btn_md" href="/order.html" th:text="#{buy}">Купить</a>
+                    <div class="Cart-block"><a class="btn btn_success btn_md" th:href="@{/books/pay}" href="/order.html" th:text="#{buy}">Купить</a>
                     </div>
                 </div>
             </form>
+            <label th:if="${paySuccess}">Книги были успешно куплены</label>
         </main>
     </div>
 </div>

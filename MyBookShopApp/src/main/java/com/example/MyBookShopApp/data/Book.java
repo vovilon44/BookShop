@@ -4,7 +4,6 @@ import com.example.MyBookShopApp.data.struct.book.file.BookFile;
 import com.example.MyBookShopApp.data.struct.book.file.FileDownloadEntity;
 import com.example.MyBookShopApp.data.struct.book.links.*;
 import com.example.MyBookShopApp.data.struct.book.review.BookReviewEntity;
-import com.example.MyBookShopApp.data.struct.payments.BalanceTransactionEntity;
 import com.example.MyBookShopApp.data.struct.tag.TagEntity;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -113,7 +112,7 @@ public class Book {
 
     @Transient
     @OneToMany(mappedBy = "book")
-    private List<BalanceTransactionEntity> balanceTransactionEntityList = new ArrayList<>();
+    private List<TransactionEntity> balanceTransactionEntityList = new ArrayList<>();
     @JsonIgnore
     @OneToMany(mappedBy = "book")
     private List<BookReviewEntity> bookReviewEntityList = new ArrayList<>();
@@ -241,11 +240,11 @@ public class Book {
         this.fileDownloadEntityList = fileDownloadEntityList;
     }
 
-    public List<BalanceTransactionEntity> getBalanceTransactionEntityList() {
+    public List<TransactionEntity> getBalanceTransactionEntityList() {
         return balanceTransactionEntityList;
     }
 
-    public void setBalanceTransactionEntityList(List<BalanceTransactionEntity> balanceTransactionEntityList) {
+    public void setBalanceTransactionEntityList(List<TransactionEntity> balanceTransactionEntityList) {
         this.balanceTransactionEntityList = balanceTransactionEntityList;
     }
 
@@ -300,12 +299,13 @@ public class Book {
         this.bookLikeMap = bookLikeMap;
     }
 
-
     @Override
     public String toString() {
         return "Book{" +
-                "id=" + id +
                 ", title='" + title + '\'' +
+                ", image='" + image + '\'' +
+                ", price=" + price +
+                ", discount=" + discount +
                 '}';
     }
 }
