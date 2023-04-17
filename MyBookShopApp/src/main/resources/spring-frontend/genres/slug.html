@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="/assets/css/basic.min.css?v=56375974">
     <link rel="stylesheet" href="/assets/css/extra.min.css?v=56375974">
     <script defer src="/assets/js/scripts.min.js?v=56375974"></script>
+    <script src="/assets/js/ChangeBooksCountsInHeader.js"></script>
 </head>
 <body class="Site">
 <header class="Header"
@@ -22,9 +23,9 @@
     <div class="wrap">
         <main class="Middle-main">
             <ul class="breadcrumbs"
-                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category=#{${genre.getName()}})}"></ul>
+                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category=${currentLocale == 'ru'} ? ${genre.ruName} : ${genre.enName}, link = @{/genres}, linkName = #{books})}"></ul>
             <header class="Middle-header">
-                <h1 class="Middle-title" th:text="#{${genre.getName()}}">Детективы
+                <h1 class="Middle-title" th:text="${currentLocale == 'ru'} ? ${genre.ruName} : ${genre.enName}">Детективы
                 </h1>
             </header>
             <div class="Section">

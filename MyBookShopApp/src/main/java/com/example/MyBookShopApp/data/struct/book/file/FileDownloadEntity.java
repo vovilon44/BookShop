@@ -14,7 +14,7 @@ public class FileDownloadEntity {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "iser_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private BookstoreUser user;
 
     @ManyToOne
@@ -23,6 +23,16 @@ public class FileDownloadEntity {
 
     @Column(columnDefinition = "INT NOT NULL DEFAULT 1")
     private int count;
+
+    public FileDownloadEntity() {
+    }
+
+    public FileDownloadEntity(BookstoreUser user, Book book) {
+        this();
+        this.user = user;
+        this.book = book;
+        this.count = 1;
+    }
 
     public int getId() {
         return id;

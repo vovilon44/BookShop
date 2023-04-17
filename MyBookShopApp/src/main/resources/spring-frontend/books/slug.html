@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="/assets/css/extra.min.css?v=87821122">
     <link rel="stylesheet" href="/assets/css/DownloadBookWindowStyle.css">
+    <script src="/assets/js/ChangeBooksCountsInHeader.js"></script>
     <script defer src="/assets/js/scripts.min.js?v=87821122"></script>
 <!--    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}">-->
 <!--    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}">-->
@@ -25,7 +26,7 @@
     <div class="wrap">
         <main class="Middle-main">
             <ul class="breadcrumbs"
-                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category=${book.title})}"></ul>
+                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category=${book.title}, link = @{/genres}, linkName = #{books})}"></ul>
             <div class="Product">
                 <div class="ProductCard">
                     <div class="ProductCard-look">
@@ -41,10 +42,10 @@
                     </div>
                     <div class="ProductCard-desc" th:replace="~{fragments/book_description_fragment :: bookDesc}"></div>
                 </div>
-                    <div class="Product-comments" th:if="${!isReviewEmpty}">
+                    <div class="Product-comments" th:if="${book.getBooksSortedReviews().size() > 0}">
                         <div class="Product-comments-header">
                             <h3 class="Product-comments-title">Отзывы
-                            </h3><span class="Rating"><span class="Rating-stars" th:if="${authorized}"><span th:attr="ave=${book.getBookRatingReviews()}" th:class="'Rating-star' + (${book.getBookRatingReviews() >= 0.2} ? 'Rating-star_view' : '')">
+                            </h3><span class="Rating"><span class="Rating-stars" th:if="${authorized}"><span th:class="'Rating-star' + (${book.getBookRatingAllReviews() >= 0.2} ? 'Rating-star_view' : '')">
                     <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
                       <g>
                         <g>
@@ -52,7 +53,7 @@
                                 d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
                         </g>
                       </g>
-                    </svg></span><span th:class="'Rating-star' + (${book.getBookRatingReviews() >= 0.4} ? 'Rating-star_view' : '')">
+                    </svg></span><span th:class="'Rating-star' + (${book.getBookRatingAllReviews() >= 0.4} ? 'Rating-star_view' : '')">
                     <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
                       <g>
                         <g>
@@ -60,7 +61,7 @@
                                 d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
                         </g>
                       </g>
-                    </svg></span><span th:class="'Rating-star' + (${book.getBookRatingReviews() >= 0.6} ? 'Rating-star_view' : '')">
+                    </svg></span><span th:class="'Rating-star' + (${book.getBookRatingAllReviews() >= 0.6} ? 'Rating-star_view' : '')">
                     <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
                       <g>
                         <g>
@@ -68,7 +69,7 @@
                                 d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
                         </g>
                       </g>
-                    </svg></span><span th:class="'Rating-star' + (${book.getBookRatingReviews() >= 0.8} ? 'Rating-star_view' : '')">
+                    </svg></span><span th:class="'Rating-star' + (${book.getBookRatingAllReviews() >= 0.8} ? 'Rating-star_view' : '')">
                     <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
                       <g>
                         <g>
@@ -76,7 +77,7 @@
                                 d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
                         </g>
                       </g>
-                    </svg></span><span th:class="'Rating-star' + (${book.getBookRatingReviews() == 1} ? 'Rating-star_view' : '')">
+                    </svg></span><span th:class="'Rating-star' + (${book.getBookRatingAllReviews() == 1} ? 'Rating-star_view' : '')">
                     <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
                       <g>
                         <g>
@@ -84,11 +85,26 @@
                                 d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
                         </g>
                       </g>
-                    </svg></span></span><span class="Rating-title" th:text="${reviewsBook.size() + ' отзыв' + (reviewsBook.size() % 10 == 1 && reviewsBook.size() % 100 != 11 ? '' : (reviewsBook.size() % 10 > 1 && reviewsBook.size() % 10 < 5 && (reviewsBook.size() < 10 || reviewsBook.size() > 20) ? 'а' : 'ов'))}">567 отзывов</span></span>
+                    </svg></span></span><span class="Rating-title" th:text="${book.getBooksSortedReviews().size() + ' отзыв' + (book.getBooksSortedReviews().size() % 10 == 1 && book.getBooksSortedReviews().size() % 100 != 11 ? '' : (book.getBooksSortedReviews().size() % 10 > 1 && book.getBooksSortedReviews().size() % 10 < 5 && (book.getBooksSortedReviews().size() < 10 || book.getBooksSortedReviews().size() > 20) ? 'а' : 'ов'))}">567 отзывов</span></span>
                         </div>
                     </div>
-                <strong class="Comments-title" th:if="${authorized}">Написать отзыв
-                </strong>
+                <strong class="Comments-title" th:if="${authorized}">Написать отзыв</strong>
+
+                <div class="Product-comments-header" th:if="!${authorized}">
+                    <strong class="Comments-title">Отзывы могут оставлять только авторизованные пользователи</strong>
+                <div class="ProductCard-cartElement">
+                    <button class="btn btn_primary btn_outline btn_login"><span class="btn-icon">
+                        <img src="/assets/img/icons/login.svg" alt="heart.svg"/></span>
+                        <span class="btn-content">Войти</span>
+                    </button>
+                </div>
+                <div class="ProductCard-cartElement">
+                    <button class="btn btn_primary btn_outline btn_register"><span class="btn-icon">
+                        <img src="/assets/img/icons/user-add-svgrepo-com.svg" alt="heart.svg"/></span>
+                        <span class="btn-content">Зарегистрироваться</span>
+                    </button>
+                </div>
+                </div>
                 <div class="Comments-addComment" th:if="${authorized}">
                     <form class="form" action="#" method="post" th:attr="data-bookid=${book.getSlug()}">
                         <div class="form-group">
@@ -111,5 +127,13 @@
 <script src="/assets/js/UploadNewBookImageScript.js"></script>
 <script src="/assets/js/DownloadBookWindowScript.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", () => {
+            if (![[${authorized}]]) {
+            document.querySelector(".btn_login").addEventListener("click", () => document.location.href = '/signin')
+            document.querySelector(".btn_register").addEventListener("click", () => document.location.href = '/signup')
+            }
+        })
+</script>
 </body>
 </html>

@@ -3,21 +3,20 @@
 <div th:fragment="panel">
     <div class="ProductCard-cart">
         <div class="ProductCard-cartElement">
-            <button class="btn btn_primary btn_outline" data-sendstatus="KEPT" data-bookid="[1111]"
-                    data-btntype="check" data-btnradio="buyblock" data-check="false"
-                    th:attr="data-bookid = ${book.slug}"
+            <button th:class="'btn btn_primary btn_outline' + (${bookKept} ? ' btn_check' : '') "  data-sendstatus="KEPT" data-bookid="[1111]"
+                    th:attr="data-bookid = ${book.slug}, data-alttext=${bookKept} ? 'Отложить' : 'Отложена', data-check= ${bookKept} ? true : false"
+                    data-btntype="check" data-btnradio="buyblock"
                     data-alttext="Отложена"><span class="btn-icon"><img
                     src="/assets/img/icons/heart.svg" alt="heart.svg"/></span><span
-                    class="btn-content">Отложить</span>
+                    class="btn-content" th:text="${bookKept} ? 'Отложена' : 'Отложить'">Отложить</span>
             </button>
         </div>
         <div class="ProductCard-cartElement">
-            <button class="btn btn_primary btn_outline" data-sendstatus="CART" data-bookid="[1111]"
-                    th:attr="data-bookid = ${book.slug}"
-                    data-btntype="check" data-btnradio="buyblock" data-check="false"
-                    data-alttext="В корзине"><span class="btn-icon"><img
+            <button th:class="'btn btn_primary btn_outline' + (${bookCart} ? ' btn_check' : '') " data-sendstatus="CART"
+                    th:attr="data-bookid =${book.slug} , data-alttext=${bookCart} ? 'Купить' : 'В корзине', data-check= ${bookCart} ? true : false"
+                    data-btntype="check" data-btnradio="buyblock"><span class="btn-icon"><img
                     src="/assets/img/icons/shopping-basket.svg"
-                    alt="shopping-basket.svg"/></span><span class="btn-content">Купить</span>
+                    alt="shopping-basket.svg"/></span><span class="btn-content" th:text="(${bookCart} ? 'В корзине' : 'Купить')">Купить</span>
             </button>
         </div>
     </div>
@@ -28,20 +27,48 @@
                 class="btn-content">Скачать</span></a>
         </div>
         <div class="ProductCard-cartElement">
-            <button class="btn btn_primary btn_outline" data-sendstatus="ARCHIVED"
-                    data-bookid="[1111]" data-btntype="check" data-btnradio="buyblock"
-                    data-check="false" data-alttext="Вернуть из архива"><span class="btn-icon"><img
+            <button th:class="'btn btn_primary btn_outline' + (${bookArch} ? ' btn_check' : '') " data-sendstatus="ARCHIVED"
+                    data-btnradio="buyblock" data-btntype="check"
+                    th:attr="data-bookid =${book.slug} , data-alttext=${bookArch} ? 'В архив' : 'Вернуть из архива', data-check= ${bookArch} ? true : false">
+                <span class="btn-icon"><img
                     src="/assets/img/icons/archive.svg" alt="archive.svg"/></span><span
-                    class="btn-content">В архив</span>
+                    class="btn-content" th:text="(${bookArch} ? 'Вернуть из архива' : 'В архив')">В архив</span>
             </button>
         </div>
     </div>
     <div id="myPopup">
-        <p>Ссылки для скачивания</p>
-        <div th:each="bookFile : ${book.getBookFileList()}">
-            <a href="#" th:href="${'/books/download/' + bookFile.hash}"
-               th:text="${bookFile.getBookFileExtensionString()}"></a>
+        <div class="tableWrap">
+            <table class="table table_noMargin">
+                <thead>
+                <tr>
+                    <th>Формат
+                    </th>
+                    <th>Описание формата
+                    </th>
+                    <th>Размер
+                    </th>
+                    <th>Скачать
+                    </th>
+                </tr>
+                </thead>
+                <tbody >
+                <tr th:each="bookFile : ${book.getBookFileList()}">
+                    <td th:text="${bookFile.getBookFileExtensionString()}"></td>
+                    <td th:text="${bookFile.getBookFileTypeDescription()}">
+                    </td>
+                    <td th:text="${downloadExceedance} ? '-' : ${bookFile.getSize()}">
+                    </td>
+                    <td>
+                        <a th:if="${!downloadExceedance}" href="#" th:href="${'/books/download/' + bookFile.hash}"
+                           th:text="${book.getTitle()}  + '.' + ${bookFile.getBookFileExtensionString()}"></a>
+                        <p th:if="${downloadExceedance}">-</p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>`
+            <h4 th:if="${downloadExceedance}">Ошибка</h4>
         </div>
+
         <span id="myPopup__close" class="close">&#10062;</span>
     </div>
     <div id="myOverlay"></div>

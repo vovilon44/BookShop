@@ -1,16 +1,26 @@
 package com.example.MyBookShopApp.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BooksPageDto {
 
     private Integer count;
-    private List<Book> books;
+    private List<Book> books = new ArrayList<>();
+    private boolean endList;
+    private Integer totalCount;
 
-    public BooksPageDto(List<Book> books) {
+    public BooksPageDto() {
+    }
+
+    public BooksPageDto(List<Book> books, boolean endList, Integer totalCount) {
+        this();
         this.count = books.size();
         this.books = books;
+        this.endList = endList;
+        this.totalCount = totalCount;
     }
+
 
     public Integer getCount() {
         return count;
@@ -28,11 +38,28 @@ public class BooksPageDto {
         this.books = books;
     }
 
+    public boolean isEndList() {
+        return endList;
+    }
+
+    public Integer getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(Integer totalCount) {
+        this.totalCount = totalCount;
+    }
+
+    public void setEndList(boolean endList) {
+        this.endList = endList;
+    }
+
     @Override
     public String toString() {
         return "BooksPageDto{" +
                 "count=" + count +
                 ", books=" + books +
+                ", endList=" + endList +
                 '}';
     }
 }

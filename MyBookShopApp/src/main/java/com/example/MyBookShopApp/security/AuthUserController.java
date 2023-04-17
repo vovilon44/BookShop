@@ -1,45 +1,47 @@
 package com.example.MyBookShopApp.security;
 
-import com.example.MyBookShopApp.data.ChangeUserEntity;
 import com.example.MyBookShopApp.data.SearchWordDto;
-import com.example.MyBookShopApp.data.SmsCode;
-import com.example.MyBookShopApp.data.services.Book2UserService;
-import com.example.MyBookShopApp.data.services.BookService;
-import com.example.MyBookShopApp.data.services.PaymentService;
-import com.example.MyBookShopApp.data.services.SmsService;
+import com.example.MyBookShopApp.data.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDateTime;
-import java.util.Random;
 
 @Controller
 public class AuthUserController
 {
     private  final  BookstoreUserRegister userRegister;
+    private final CodeSenderService codeSenderService;
 
-    private final JavaMailSender javaMailSender;
-    private final SmsService smsService;
-    private final BookService bookService;
+    private final SessionService sessionService;
+
+
 
     private final Book2UserService book2UserService;
     private final PaymentService paymentService;
 
+    @Value("${sentCode.length}")
+    private Integer lengthOfSentCode;
+
+    @Value("${transactions.limit.size}")
+    private Integer limit;
+    @Value("${transactions.offset.size}")
+    private Integer offset;
+
 
     @Autowired
-    public AuthUserController(BookstoreUserRegister userRegister, JavaMailSender javaMailSender, SmsService smsService, BookService bookService, Book2UserService book2UserService, PaymentService paymentService) {
+    public AuthUserController(BookstoreUserRegister userRegister, CodeSenderService codeSenderService, SessionService sessionService, Book2UserService book2UserService, PaymentService paymentService) {
         this.userRegister = userRegister;
-        this.javaMailSender = javaMailSender;
-        this.smsService = smsService;
-        this.bookService = bookService;
+        this.codeSenderService = codeSenderService;
+        this.sessionService = sessionService;
         this.book2UserService = book2UserService;
         this.paymentService = paymentService;
     }
@@ -50,7 +52,12 @@ public class AuthUserController
     }
 
     @GetMapping("/signin")
-    public String handleSignIn(){
+    public String handleSignIn(Model model, HttpServletRequest request){
+        if (request.getHeader("Referer") != null && !request.getHeader("Referer").contains("/signin") && !request.getHeader("Referer").contains("/signup")) {
+            request.getSession().setAttribute("urlBeforeAutentification", request.getHeader("Referer"));
+        }
+        model.addAttribute("lengthCode", lengthOfSentCode);
+        model.addAttribute("maskForCode", codeSenderService.getMaskForCode());
         return "signin";
     }
 
@@ -58,57 +65,41 @@ public class AuthUserController
     public String handleSignUp(Model model)
     {
         model.addAttribute("regForm", new RegistrationForm());
+        model.addAttribute("lengthCode", lengthOfSentCode);
+        model.addAttribute("maskForCode", codeSenderService.getMaskForCode());
         return "signup";
     }
 
     @PostMapping("/requestContactConfirmation")
     @ResponseBody
-    public ContactConfirmationResponse handleRequestContactConfirmation(@RequestBody ContactConfirmationPayload payload)
-    {
-        ContactConfirmationResponse response = new ContactConfirmationResponse();
-        response.setResult("true");
+    public ContactConfirmationResponse handleRequestContactConfirmation(@RequestBody ContactConfirmationPayload payload, Model model) throws MailException {
 
-        if (payload.getContact().contains("@")){
-            return response;
-        } else {
-            String smsCodeString = smsService.sendSecretCodeSms(payload.getContact());
-            smsService.saveNewCode(new SmsCode(smsCodeString, 60 * 5));
-            return response;
-        }
+            return codeSenderService.sendSecretCodeSms(payload.getContact(), model.getAttribute("currentLocale").toString(), payload.isLogin());
     }
 
-    @PostMapping("/requestEmailConfirmation")
-    @ResponseBody
-    public ContactConfirmationResponse handleRequestEmailConfirmation(@RequestBody ContactConfirmationPayload payload)
-    {
-        ContactConfirmationResponse response = new ContactConfirmationResponse();
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("belialpw2@bk.ru");
-        message.setTo(payload.getContact());
-        SmsCode smsCode =new SmsCode(smsService.generatedCode(), 300);
-        smsService.saveNewCode(smsCode);
-        message.setSubject("Bookstore email verification");
-        message.setText("Verification code is: " + smsCode.getCode());
-        javaMailSender.send(message);
-        response.setResult("true");
-        return response;
-
-    }
+//    @PostMapping("/requestEmailConfirmation")
+//    @ResponseBody
+//    public ContactConfirmationResponse handleRequestEmailConfirmation(@RequestBody ContactConfirmationPayload payload)
+//    {
+//        ContactConfirmationResponse response = new ContactConfirmationResponse();
+//
+//        response.setResult("true");
+//        return response;
+//    }
 
     @PostMapping("/approveContact")
     @ResponseBody
-    public ContactConfirmationResponse handleApproveContact(@RequestBody ContactConfirmationPayload payload){
-        ContactConfirmationResponse response = new ContactConfirmationResponse();
-        if (smsService.verifyCode(payload.getCode())){
-            response.setResult("true");
-        }
-        return response;
+    public ContactConfirmationResponse handleApproveContact(@RequestBody ContactConfirmationPayload payload, Model model){
+        return codeSenderService.verifyCode(payload.getContact(), payload.getCode().replaceAll(" ", ""), model.getAttribute("currentLocale").toString(), false);
     }
 
     @PostMapping("/reg")
-    public String handleUserRegistration(RegistrationForm registrationForm, Model model)
+    public String handleUserRegistration(RegistrationForm registrationForm, Model model,
+                                         @CookieValue(name = "cartContents", required = false) String cartContents,
+                                         @CookieValue(name = "keptContents", required = false) String keptContents,
+                                         @CookieValue(name = "historyVisit", required = false) String historyVisit)
     {
-        if (userRegister.registerNewUser(registrationForm) != null){
+        if (userRegister.registerNewUser(registrationForm, cartContents, keptContents, historyVisit) != null){
             model.addAttribute("regOk", true);
         } else {
             model.addAttribute("regOk", false);
@@ -119,43 +110,44 @@ public class AuthUserController
 
     @PostMapping("/login")
     @ResponseBody
-    public ContactConfirmationResponse handleLogin(@RequestBody ContactConfirmationPayload payload, HttpServletResponse httpServletResponse) {
-        ContactConfirmationResponse loginResponse = userRegister.jwtLogin(payload);
-        Cookie cookie = new Cookie("token", loginResponse.getResult());
-        httpServletResponse.addCookie(cookie);
-        return loginResponse;
-    }
-
-    @PostMapping("/login-by-phone-number")
-    @ResponseBody
-    public ContactConfirmationResponse handleLoginByPhoneNumber(@RequestBody ContactConfirmationPayload payload, HttpServletResponse httpServletResponse) {
-        if (smsService.verifyCode(payload.getCode())) {
-            ContactConfirmationResponse loginResponse = userRegister.jwtLoginByPhoneNumber(payload);
-            Cookie cookie = new Cookie("token", loginResponse.getResult());
+    public ContactConfirmationResponse handleLogin(@RequestBody ContactConfirmationPayload payload, HttpServletResponse httpServletResponse, Model model, HttpServletRequest request) {
+        ContactConfirmationResponse responseLogin = codeSenderService.verifyCode(payload.getContact(), payload.getCode().replaceAll(" ", ""), model.getAttribute("currentLocale").toString(), true);
+        if (responseLogin != null && responseLogin.getResult() != null && responseLogin.getResult()) {
+            String token = userRegister.jwtLogin(payload);
+            Cookie cookie = new Cookie("token", token);
             httpServletResponse.addCookie(cookie);
-            return loginResponse;
-        } else {
-            return null;
+            responseLogin.setMessage(request.getSession().getAttribute("urlBeforeAutentification") == null ? "/books/my" : request.getSession().getAttribute("urlBeforeAutentification").toString());
+//            sessionService.newSession(userRegister.getCurrentUser(), token);
+
         }
+            return responseLogin;
+
     }
 
-    @GetMapping("books/my")
-    public String handleMy(){
-        return "my";
-    }
 
     @GetMapping("/profile")
-    public String handleProfile(Model model)
+    public String handleProfile(Model model, @RequestParam(value = "result", required = false) String result, @CookieValue(value = "token", required = false) String token)
     {
-        model.addAttribute("transactions", book2UserService.getTransactions());
+        if (result != null && result.equals("error")){
+            model.addAttribute("paymentSumTotal", book2UserService.getSummInCart());
+        }
+        model.addAttribute("transactions", book2UserService.getTransactions(offset, limit, model.getAttribute("currentLocale").toString()));
         model.addAttribute("curUsr", userRegister.getCurrentUser());
+        model.addAttribute("sessions", sessionService.getSessions(userRegister.getCurrentUser()));
+        model.addAttribute("token", token);
+
         return "profile";
     }
 
     @PostMapping("/profile/addMoney")
-    public RedirectView handlePay(AddMoneyDto addMoneyDto) throws NoSuchAlgorithmException {
+    public RedirectView handlePay(AddMoneyDto addMoneyDto) {
         String paymentUrl = paymentService.getPaymentUrl(addMoneyDto.getSum());
-        return new RedirectView(paymentUrl);
+        if (paymentUrl != null) {
+            return new RedirectView(paymentUrl);
+        } else {
+            return null;
+        }
+
     }
 
 //    @GetMapping("/logout")
@@ -180,39 +172,18 @@ public class AuthUserController
                     registrationForm.getName().equals(userRegister.getCurrentUser().getName()) &&
                     registrationForm.getPhone().equals(userRegister.getCurrentUser().getPhone())) {
                 if (userRegister.changePassForUser(registrationForm.getPassword())) {
-                    model.addAttribute("transactions", book2UserService.getTransactions());
+                    model.addAttribute("transactions", book2UserService.getTransactions(offset, limit, model.getAttribute("currentLocale").toString()));
                     model.addAttribute("curUsr", userRegister.getCurrentUser());
                     model.addAttribute("passwordChanged", true);
                     return "/profile";
                 }
-                model.addAttribute("transactions", book2UserService.getTransactions());
+                model.addAttribute("transactions", book2UserService.getTransactions(offset, limit, model.getAttribute("currentLocale").toString()));
                 model.addAttribute("curUsr", userRegister.getCurrentUser());
                 model.addAttribute("passwordChangedFailed", true);
                 return "/profile";
             } else {
-                Random random = new Random();
-                StringBuilder sb = new StringBuilder();
-                while (sb.length() < 3){
-                    sb.append(random.nextInt(9));
-                }
-                String urlForMessage = "http://localhost:8085/profile/" + sb + token;
-
-                ChangeUserEntity changeUser =new ChangeUserEntity();
-                changeUser.setCode(sb.toString());
-                changeUser.setEmail(registrationForm.getMail() != null ? registrationForm.getMail() : userRegister.getCurrentUser().getEmail());
-                changeUser.setName(registrationForm.getName() != null ? registrationForm.getName() : userRegister.getCurrentUser().getName());
-                changeUser.setPhone(registrationForm.getPhone() != null ? registrationForm.getPhone() : userRegister.getCurrentUser().getPhone());
-                changeUser.setExpairedTime(LocalDateTime.now().plusSeconds(300));
-                userRegister.saveChangedUser(changeUser);
-
-                SimpleMailMessage message = new SimpleMailMessage();
-                message.setFrom("belialpw2@bk.ru");
-                message.setTo(changeUser.getEmail());
-
-                message.setSubject("Bookstore email verification");
-                message.setText("For change account direct: " + urlForMessage);
-                javaMailSender.send(message);
-                model.addAttribute("transactions", book2UserService.getTransactions());
+                codeSenderService.sendEmailForEditUser(registrationForm, token);
+                model.addAttribute("transactions", book2UserService.getTransactions(offset, limit, model.getAttribute("currentLocale").toString()));
                 model.addAttribute("curUsr", userRegister.getCurrentUser());
                 model.addAttribute("userWait", true);
                 return "/profile";
@@ -231,7 +202,7 @@ public class AuthUserController
                     return "/signin";
                 }
             }
-            model.addAttribute("transactions", book2UserService.getTransactions());
+            model.addAttribute("transactions", book2UserService.getTransactions(offset, limit, model.getAttribute("currentLocale").toString()));
             model.addAttribute("curUsr", userRegister.getCurrentUser());
             model.addAttribute("userEditFailed", true);
             return "/profile";

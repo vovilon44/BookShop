@@ -6,8 +6,6 @@ import com.example.MyBookShopApp.data.struct.book.links.Book2UserEntity;
 import com.example.MyBookShopApp.data.struct.book.links.BookLike2UserEntity;
 import com.example.MyBookShopApp.data.struct.book.review.BookReviewEntity;
 import com.example.MyBookShopApp.data.struct.book.review.BookReviewLikeEntity;
-import com.example.MyBookShopApp.data.struct.book.review.MessageEntity;
-import com.example.MyBookShopApp.data.struct.user.UserContactEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -50,17 +48,13 @@ public class BookstoreUser
     @OneToMany(mappedBy = "user")
     private List<BookReviewEntity> bookReviewEntityList = new ArrayList<>();
 
-    @Transient
-    @OneToMany(mappedBy = "user")
-    private List<MessageEntity> messageEntityList = new ArrayList<>();
 
     @Transient
     @OneToMany(mappedBy = "user")
     private List<BookReviewLikeEntity> bookReviewLikeEntityList = new ArrayList<>();
 
-    @Transient
-    @OneToMany(mappedBy = "user")
-    private List<UserContactEntity> userContactEntityList = new ArrayList<>();
+
+
 
     public Integer getId() {
         return id;
@@ -95,7 +89,7 @@ public class BookstoreUser
     }
 
     public double getBalance() {
-        return balance;
+        return Math.round(balance * 100) / 100;
     }
 
     public void setBalance(double balance) {
@@ -158,13 +152,8 @@ public class BookstoreUser
         this.bookReviewEntityList = bookReviewEntityList;
     }
 
-    public List<MessageEntity> getMessageEntityList() {
-        return messageEntityList;
-    }
 
-    public void setMessageEntityList(List<MessageEntity> messageEntityList) {
-        this.messageEntityList = messageEntityList;
-    }
+
 
     public List<BookReviewLikeEntity> getBookReviewLikeEntityList() {
         return bookReviewLikeEntityList;
@@ -174,13 +163,6 @@ public class BookstoreUser
         this.bookReviewLikeEntityList = bookReviewLikeEntityList;
     }
 
-    public List<UserContactEntity> getUserContactEntityList() {
-        return userContactEntityList;
-    }
-
-    public void setUserContactEntityList(List<UserContactEntity> userContactEntityList) {
-        this.userContactEntityList = userContactEntityList;
-    }
 
     @Override
     public String toString() {

@@ -16,7 +16,10 @@ public class TagEntity {
     private int id;
 
     @Column(columnDefinition = "VARCHAR(255) NOT NULL")
-    private String name;
+    private String ruName;
+
+    @Column(columnDefinition = "VARCHAR(255) NOT NULL")
+    private String enName;
 
     String slug;
     @JsonIgnore
@@ -31,12 +34,20 @@ public class TagEntity {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getRuName() {
+        return ruName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setRuName(String ruName) {
+        this.ruName = ruName;
+    }
+
+    public String getEnName() {
+        return enName;
+    }
+
+    public void setEnName(String enName) {
+        this.enName = enName;
     }
 
     public List<Book2TagEntity> getBook2TagEntityList() {
@@ -59,8 +70,10 @@ public class TagEntity {
     public String toString() {
         return "TagEntity{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", ruName='" + ruName + '\'' +
+                ", enName='" + enName + '\'' +
                 ", slug='" + slug + '\'' +
+                ", book2TagEntityList=" + book2TagEntityList +
                 '}';
     }
 }

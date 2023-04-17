@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<div class="Tags" id="tags" th:fragment="cloud">
-    <div th:class="'Tag ' + ${tagdto.rang < 1 ? 'Tag_lg' : (tagdto.rang < 2 ? 'Tag_md' : (tagdto.rang < 3 ? '' : (tagdto.rang < 4 ? 'Tag_sm' : 'Tag_xs')))}"
-         th:each="tagdto : ${tagsWithRang}"><a href="/tags/index.html" th:text="#{${tagdto.tag.name}}" th:href="@{'/tag/' + ${tagdto.tag.slug}}">современная литература</a>
+<div hidden="hidden" class="Tags" id="tags" th:fragment="cloud">
+    <div  th:class="'Tag ' + ${tagdto.rang < 1 ? 'Tag_lg' : (tagdto.rang < 2 ? 'Tag_md' : (tagdto.rang < 3 ? '' : (tagdto.rang < 4 ? 'Tag_sm' : 'Tag_xs')))}"
+         th:each="tagdto : ${tagsWithRang}"><a href="/tags/index.html" th:text="${currentLocale == 'ru'} ? ${tagdto.tag.ruName} : ${tagdto.tag.enName}" th:href="@{'/tags/' + ${tagdto.tag.slug}}">современная литература</a>
     </div>
 </div>
+
 </html>

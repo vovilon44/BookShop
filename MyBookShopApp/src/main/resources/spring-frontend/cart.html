@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="/assets/css/basic.min.css?v=22193648">
     <link rel="stylesheet" href="/assets/css/extra.min.css?v=22193648">
     <script defer src="/assets/js/scripts.min.js?v=22193648"></script>
+    <script src="/assets/js/ChangeBooksCountsInHeader.js"></script>
 </head>
 <body class="Site">
 <header class="Header"
@@ -23,7 +24,6 @@
         <main class="Middle-main">
             <h1 class="Middle-title" th:text="#{basket}">Корзина
             </h1>
-            <h3 th:if="${isCartEmpty}">Корзина пуста</h3>
             <form class="form Cart" action="#" method="post">
                 <div class="Cart-product" th:each="book: ${bookCart}">
                     <div class="Cart-block Cart-block_row">
@@ -33,7 +33,7 @@
                         </div>
                         <div class="Cart-block Cart-block_row">
                             <div class="Cart-block Cart-block_info">
-                                <div class="Cart-author"><a href="#" th:text="${book.authorsFullName().size() > 1} ? ${book.authorsFullName().get(0)} + ' и другие' : (${book.authorsFullName().size() == 1} ? ${book.authorsFullName().get(0)} : '')">Борис Васильевич Бедный</a>
+                                <div class="Cart-author"><a href="#" th:text="${book.getAuthors()}">Борис Васильевич Бедный</a>
                                 </div>
                                 <div class="Cart-title"><a th:href="@{'/books/' + ${book.slug}}" th:text="${book.title}">Жизнь</a>
                                 </div>
@@ -83,14 +83,14 @@
                                 <div class="Cart-buttons">
                                     <div class="Cart-btn">
                                         <button class="btn btn_primary btn_outline" data-sendstatus="KEPT"
-                                                data-bookid="[1122]"><span class="btn-icon"><img
+                                                th:attr="data-bookid=${book.slug}"><span class="btn-icon"><img
                                                 src="/assets/img/icons/heart.svg" alt="heart.svg"/></span><span
                                                 class="btn-content" th:text="#{postpone}">Отложить</span>
                                         </button>
                                     </div>
                                     <div class="Cart-btn">
                                         <button class="btn btn_danger btn_outline" data-sendstatus="UNLINK"
-                                                th:attr="data-bookid=${'cart/remove/' + book.slug}" ><span class="btn-icon"><img
+                                                th:attr="data-bookid=${book.slug}" ><span class="btn-icon"><img
                                                 src="/assets/img/icons/trash.svg" alt="trash.svg"/></span><span
                                                 class="btn-content" th:text="#{remove}">Удалить</span>
                                         </button>
@@ -113,13 +113,13 @@
                 <div class="Cart-total" th:if="${bookCart.size() > 0}">
                     <div class="Cart-block Cart-block_total">
                         <strong class="Cart-title" th:text="#{total.price}">Итого:
-                        </strong><span class="Cart-price">534 р.</span><span class="Cart-price_old">658 р.</span>
+                        </strong><span class="Cart-price"></span><span class="Cart-price_old"></span>
                     </div>
                     <div class="Cart-block"><a class="btn btn_success btn_md" th:href="@{/books/pay}" href="/order.html" th:text="#{buy}">Купить</a>
                     </div>
                 </div>
             </form>
-            <label th:if="${paySuccess}">Книги были успешно куплены</label>
+            <div class="Cart-messageInfo" th:if="${bookCart.size() == 0}">Корзина пуста</div>
         </main>
     </div>
 </div>
@@ -143,12 +143,7 @@
             element.querySelector(".Cart-price").textContent = Math.round(price * 10) / 10;
             element.querySelector(".Cart-price_old").textContent = Math.round(oldPrice * 10) / 10;
         }
-
     }
-
-
-
-
 </script>
 </body>
 </html>

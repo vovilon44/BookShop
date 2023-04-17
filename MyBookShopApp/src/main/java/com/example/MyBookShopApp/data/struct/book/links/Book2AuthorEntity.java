@@ -30,6 +30,16 @@ public class Book2AuthorEntity {
         return author.toString();
     }
 
+    @JsonGetter("bookSlug")
+    public String getSlugBook(){
+        return book.getSlug();
+    }
+
+    @JsonGetter("authorSlug")
+    public String getSlugAuthor(){
+        return author.getSlug();
+    }
+
     @JsonGetter("books")
     public String booksName(){
         return book.toString();

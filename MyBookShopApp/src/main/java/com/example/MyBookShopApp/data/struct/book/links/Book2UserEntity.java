@@ -28,6 +28,19 @@ public class Book2UserEntity {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private BookstoreUser user;
 
+    public Book2UserEntity() {
+
+    }
+
+    public Book2UserEntity(int typeId, Book book, BookstoreUser user) {
+        this();
+        this.time = LocalDate.now();
+        this.typeId = typeId;
+        this.book = book;
+        this.user = user;
+    }
+
+
     public int getId() {
         return id;
     }

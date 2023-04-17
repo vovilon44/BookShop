@@ -3,12 +3,9 @@ package com.example.MyBookShopApp.data;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.http.HttpStatus;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
 
-public class ApiResponse<T>
+public class ApiResponse<ApiResponseData>
 {
     private HttpStatus status;
 
@@ -17,6 +14,7 @@ public class ApiResponse<T>
 
     private String message;
     private String debugMessage;
+    private Boolean result;
     private Object data;
 
     public ApiResponse() {
@@ -28,6 +26,13 @@ public class ApiResponse<T>
         this.status = status;
         this.message = message;
         this.debugMessage = ex.getLocalizedMessage();
+    }
+
+    public ApiResponse(HttpStatus status, String message, Boolean result) {
+        this();
+        this.status = status;
+        this.message = message;
+        this.result = result;
     }
 
     public HttpStatus getStatus() {
@@ -60,6 +65,14 @@ public class ApiResponse<T>
 
     public void setDebugMessage(String debugMessage) {
         this.debugMessage = debugMessage;
+    }
+
+    public Boolean getResult() {
+        return result;
+    }
+
+    public void setResult(Boolean result) {
+        this.result = result;
     }
 
     public Object getData() {

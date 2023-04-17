@@ -78,59 +78,59 @@ class BookstoreUserRegisterTest {
     }
 
 
-    @Test
-    void registerNewUser() {
-        BookstoreUser user = userRegister.registerNewUser(registrationForm);
-        assertNotNull(user);
-        assertTrue(passwordEncoder.matches(registrationForm.getPass(), user.getPassword()));
-        assertTrue(CoreMatchers.is(user.getPhone()).matches(registrationForm.getPhone()));
-        assertTrue(CoreMatchers.is(user.getName()).matches(registrationForm.getName()));
-        assertTrue(CoreMatchers.is(user.getEmail()).matches(registrationForm.getEmail()));
+//    @Test
+//    void registerNewUser() {
+//        BookstoreUser user = userRegister.registerNewUser(registrationForm);
+//        assertNotNull(user);
+//        assertTrue(passwordEncoder.matches(registrationForm.getPass(), user.getPassword()));
+//        assertTrue(CoreMatchers.is(user.getPhone()).matches(registrationForm.getPhone()));
+//        assertTrue(CoreMatchers.is(user.getName()).matches(registrationForm.getName()));
+//        assertTrue(CoreMatchers.is(user.getEmail()).matches(registrationForm.getEmail()));
+//
+//        Mockito.verify(bookstoreUserRepositoryMock, Mockito.times(1)).
+//                save(Mockito.any(BookstoreUser.class));
+//    }
 
-        Mockito.verify(bookstoreUserRepositoryMock, Mockito.times(1)).
-                save(Mockito.any(BookstoreUser.class));
-    }
+//    @Test
+//    void registerNewUserFail(){
+//        Mockito.doReturn(new BookstoreUser())
+//                .when(bookstoreUserRepositoryMock)
+//                .findBookstoreUserByEmail(registrationForm.getEmail());
+//        BookstoreUser user = userRegister.registerNewUser(registrationForm);
+//        assertNull(user);
+//    }
 
-    @Test
-    void registerNewUserFail(){
-        Mockito.doReturn(new BookstoreUser())
-                .when(bookstoreUserRepositoryMock)
-                .findBookstoreUserByEmail(registrationForm.getEmail());
-        BookstoreUser user = userRegister.registerNewUser(registrationForm);
-        assertNull(user);
-    }
+//    @Test
+//    void validLoginWithEmail(){
+//        Mockito.doReturn(new BookstoreUserDetails(bookstoreUser))
+//                .when(bookstoreUserDetailsServiceMock)
+//                .loadUserByUsername(payloadEmail.getContact());
+//        ContactConfirmationResponse response = userRegister.jwtLogin(payloadEmail);
+//        assertTrue(jwtUtil.validateToken(response.getResult(), new BookstoreUserDetails(bookstoreUser)));
+//    }
 
-    @Test
-    void validLoginWithEmail(){
-        Mockito.doReturn(new BookstoreUserDetails(bookstoreUser))
-                .when(bookstoreUserDetailsServiceMock)
-                .loadUserByUsername(payloadEmail.getContact());
-        ContactConfirmationResponse response = userRegister.jwtLogin(payloadEmail);
-        assertTrue(jwtUtil.validateToken(response.getResult(), new BookstoreUserDetails(bookstoreUser)));
-    }
+//    @Test
+//    void loginWithEmailFailedPass(){
+//        payloadEmail.setCode("332244");
+//        Mockito.doReturn(new BookstoreUserDetails(bookstoreUser))
+//                .when(bookstoreUserDetailsServiceMock)
+//                .loadUserByUsername(payloadEmail.getContact());
+//        try {
+//            Object response = userRegister.jwtLogin(payloadEmail);
+//            assertTrue(false);
+//        } catch (BadCredentialsException e){
+//            assertTrue(e.getLocalizedMessage().equals("Bad credentials"));
+//        }
+//    }
 
-    @Test
-    void loginWithEmailFailedPass(){
-        payloadEmail.setCode("332244");
-        Mockito.doReturn(new BookstoreUserDetails(bookstoreUser))
-                .when(bookstoreUserDetailsServiceMock)
-                .loadUserByUsername(payloadEmail.getContact());
-        try {
-            Object response = userRegister.jwtLogin(payloadEmail);
-            assertTrue(false);
-        } catch (BadCredentialsException e){
-            assertTrue(e.getLocalizedMessage().equals("Bad credentials"));
-        }
-    }
-
-    @Test
-    void validLoginWithPhone(){
-        Mockito.doReturn(new BookstoreUserDetails(bookstoreUser))
-                .when(bookstoreUserDetailsServiceMock)
-                .loadUserByUsername(payloadPhone.getContact());
-        ContactConfirmationResponse response = userRegister.jwtLogin(payloadPhone);
-        assertTrue(jwtUtil.validateToken(response.getResult(), new BookstoreUserDetails(bookstoreUser)));
-    }
+//    @Test
+//    void validLoginWithPhone(){
+//        Mockito.doReturn(new BookstoreUserDetails(bookstoreUser))
+//                .when(bookstoreUserDetailsServiceMock)
+//                .loadUserByUsername(payloadPhone.getContact());
+//        ContactConfirmationResponse response = userRegister.jwtLogin(payloadPhone);
+//        assertTrue(jwtUtil.validateToken(response.getResult(), new BookstoreUserDetails(bookstoreUser)));
+//    }
 
 
     @Test

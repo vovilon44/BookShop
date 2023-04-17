@@ -14,6 +14,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.servlet.http.Cookie;
+import java.util.Arrays;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter
@@ -54,12 +57,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/my", "/profile").authenticated()//hasRole("USER")
+                .antMatchers("/my", "/profile", "/books/pay").authenticated()//hasRole("USER")
                 .antMatchers("/**").permitAll()
                 .and().formLogin()
                 .loginPage("/signin").failureUrl("/signin")
                 .and().logout().logoutUrl("/logout").logoutSuccessUrl("/signin").addLogoutHandler((request, response, authentication)-> {
-                    blackListService.setToken(request);
+                    blackListService.addToken(Arrays.stream(request.getCookies()).filter(e->e.getName().equals("token")).findFirst().map(Cookie::getValue).orElse(null));
                 }).deleteCookies("token")
                         .and().oauth2Login()
                         .and().oauth2Client();

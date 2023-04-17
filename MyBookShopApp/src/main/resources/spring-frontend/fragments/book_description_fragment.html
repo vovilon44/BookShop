@@ -4,8 +4,8 @@
     <div class="ProductCard-header">
         <h1 class="ProductCard-title" th:text="${book.title}">Мара и морок
         </h1>
-        <div class="ProductCard-author"><span class="ProductCard-titleProp">Автор:</span>&#32;<a
-                :href="#" th:text="${book.authorsFullName().size() > 1} ? ${book.authorsFullName().get(0)} + ' и другие' : (${book.authorsFullName().size() == 1} ? ${book.authorsFullName().get(0)} : '')">Лия Арден</a>
+        <div class="ProductCard-author"><span class="ProductCard-titleProp">Авторы:</span><div th:each="author : ${book.getBook2AuthorEntityList()}">&#32;<a
+                th:href="@{'/authors/' + ${author.getSlugAuthor()}}"  th:text="${author.authorsFullName()}">Лия Арден</a></div>
         </div>
         <div class="ProductCard-rating"><span class="ProductCard-titleProp">Рейтинг:</span>
             <button class="trigger trigger_dropdown" type="button">
@@ -272,7 +272,7 @@
             </button>
         </div>
         <div class="ProductCard-assessment"><span
-                class="ProductCard-titleProp">Оцените книгу:</span><span th:class="'Rating Rating_input' + ${isBookRatingEmpty ? '' : ' Rating_inputClick'}"
+                class="ProductCard-titleProp">Оцените книгу:</span><span th:class="'Rating Rating_input' + ${isBookRatingFromUserEmpty ? '' : ' Rating_inputClick'}"
                                                                          th:attr="data-bookid=${book.slug}" data-bookid="2121"><span
                 class="Rating-stars"><span class="Rating-star">
                         <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
@@ -320,11 +320,10 @@
                           </g>
                         </svg></span>
                       <input name="rating" type="radio" value="5"/></span>
-            <span class="Rating-title" th:if="${!isBookRatingEmpty}"></span>
         </span>
         </div>
         <div class="ProductCard-tags"><span class="ProductCard-titleProp">Тэги:</span><a
-                href="/tags/" th:each="tag, stat : ${tags}" th:text="#{${tag.name}} + (${stat.last} ? '' : ',&nbsp;')"></a>
+                th:href="@{'/tags/' + ${tag.slug}}" th:each="tag, stat : ${tags}" th:text="${currentLocale == 'ru'} ? ${tag.ruName} : ${tag.enName} + (${stat.last} ? '' : ',&nbsp;')"></a>
         </div>
         <div class="ProductCard-cost"><span class="ProductCard-titleProp">Цена:</span><span
                 class="ProductCard-priceOld" th:text="${book.discount} ? ${book.price} : ''">₽300</span><span class="ProductCard-price" th:text="${#numbers.formatDecimal(book.price - (book.discount * book.price),1,2)}">₽180</span>
@@ -342,16 +341,38 @@
     </div>
     <div th:replace="~{fragments/book_slug_buttons_fragment :: panel}"></div>
     <script th:inline="javascript">
-        var rating=document.getElementsByName('rating');
         document.addEventListener("DOMContentLoaded", getStars);
-        document.addEventListener("change", getStarsChange);
         function getStars()
         {
-            if (![[${isBookRatingEmpty}]]){
-                let rat = [[${bookRating}]] - 1
-                 rating[rat].checked=true;
 
+            if ([[${isBookRatingFromUserEmpty}]]){
+                document.querySelector('.Rating.Rating_input').addEventListener("mouseleave", unCheckedStars)
+                document.querySelector('.Rating.Rating_input').addEventListener("mouseover", checkedStars)
+                document.querySelector('.Rating.Rating_input').addEventListener("mousedown", clickStar)
+            } else {
+                let rat = [[${bookRatingFromUser}]] - 1
+                document.querySelectorAll('input[name=rating]')[rat].checked=true;
             }
+
+        }
+        function checkedStars(e){
+            if (e.target.name === "rating") {
+                e.target.checked = true
+                e.target.closest(".Rating_input").classList.add("Rating_inputClick")
+            }
+        }
+        function unCheckedStars(e){
+            if (e.target.classList.contains("Rating_input")){
+                e.target.classList.remove("Rating_inputClick")
+            }
+
+        }
+        function clickStar(e){
+            document.querySelector('.Rating.Rating_input').classList.remove("Rating_inputClick")
+            e.target.checked = false
+            document.querySelector('.Rating.Rating_input').removeEventListener("mouseleave", unCheckedStars)
+            document.querySelector('.Rating.Rating_input').removeEventListener("mouseover", checkedStars)
+
         }
     </script>
 </div>

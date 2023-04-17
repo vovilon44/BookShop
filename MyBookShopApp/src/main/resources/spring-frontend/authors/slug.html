@@ -13,26 +13,27 @@
     <link rel="stylesheet" href="/assets/css/fonts.min.css?v=93601584">
     <link rel="stylesheet" href="/assets/css/basic.min.css?v=93601584">
     <link rel="stylesheet" href="/assets/css/extra.min.css?v=93601584">
+    <script src="/assets/js/ChangeBooksCountsInHeader.js"></script>
     <script defer src="/assets/js/scripts.min.js?v=93601584"></script>
 </head>
 <body class="Site">
-<header class="Header" th:replace="~{fragments/common_header_fragment :: head(main='menu-item menu-item_ACTIVE', status=${authorized} ? 'authorized' : 'unauthorized')}"></header>
+<header class="Header" th:replace="~{fragments/common_header_fragment :: head(authors='menu-item', status=${authorized} ? 'authorized' : 'unauthorized')}"></header>
 <div class="Middle">
     <div class="wrap">
         <main class="Middle-main">
             <ul class="breadcrumbs"
-                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category=${author.getName()})}"></ul>
+                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category=${author.getName()}, link = @{/authors}, linkName = #{authors})}"></ul>
             <div th:replace="~{fragments/author_article_fragment :: article}"></div>
-            <div class="Section-header" th:if="${books.size()} < 6">
+            <div class="Section-header" th:if="${books.books.size()} < 6">
                 <h2 class="Section-title" th:text="#{main.slider.books.author}">Рекомендуемое
                 </h2>
             </div>
             <div class="Section">
-                <div th:class="${books.size()} >5 ?'Cards Cards_refresh' : ''" th:replace="${books.size()} >5 ? ~{fragments/book_slider_fragment :: bookSlider(title=#{main.slider.books.author}, type='books')} : ~{fragments/books_pool_fragment :: pool(category='without')}"></div>
+                <div th:class="${books.books.size()} >5 ?'Cards Cards_refresh' : ''" th:replace="${books.books.size()} >5 ? ~{fragments/book_slider_fragment :: bookSlider(title=#{main.slider.books.author}, dataId = ${author.slug}, type='author')} : ~{fragments/books_pool_fragment :: pool(category='author')}"></div>
             </div>
             <footer class="Section-footer"><a class="Author-books" th:href="@{'/books/author/' + ${author.slug} }" href="/books/author.html">Все
                 книги автора<span
-                        class="Author-amount" th:text="'(' + ${books.size()} + ')'">(55)</span></a>
+                        class="Author-amount" th:text="'(' + ${books.getTotalCount()} + ')'">(55)</span></a>
             </footer>
         </main>
     </div>

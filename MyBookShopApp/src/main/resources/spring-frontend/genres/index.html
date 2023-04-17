@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="/assets/css/fonts.min.css?v=52263780">
     <link rel="stylesheet" href="/assets/css/basic.min.css?v=52263780">
     <link rel="stylesheet" href="/assets/css/extra.min.css?v=52263780">
+    <script src="/assets/js/ChangeBooksCountsInHeader.js"></script>
     <script defer src="/assets/js/scripts.min.js?v=52263780"></script>
 </head>
 <body class="Site">
@@ -24,20 +25,24 @@
             </h1>
             <div class="Section">
                 <div class="Tags Tags_genres">
-                    <div th:class="'Tags' + (${genreFirst == mainGenres[0]} ? 'Tags_embed' : '')" th:each="genreFirst : ${mainGenres}">
+                    <div th:class="'Tags' + (${genre == mainGenres[0]} ? ' Tags_embed' : '')" th:each="genre : ${mainGenres}" th:if="${genre.parentId == null}">
                         <div class="Tags-title">
-                            <div class="Tag"><a th:href="@{'/genres/' + ${genreFirst.getGenre().getSlug()}}" href="/genres/slug.html" th:inline="text">[[#{${genreFirst.getGenre().getName()}}]]<span class="undefined-amount" th:text="'(' + ${genreFirst.getGenre().getBookCount()} + ')'">(15638)</span></a>
+                            <div class="Tag"><a th:href="@{'/genres/' + ${genre.getSlug()}}" >[[${currentLocale == 'ru'} ? ${genre.ruName} : ${genre.enName}]]<span class="undefined-amount" th:text="'(' + ${genre.getBookCount()} + ')'">(15638)</span></a>
                             </div>
                         </div>
-                        <div class="Tags" th:each="genreSecond : ${genreFirst.getChildList()}" th:remove="${genreSecond.getChildList().size() == 0} ? tag : none">
-                            <div class="Tags-title" th:remove="${genreSecond.getChildList().size() == 0} ? tag : none">
-                                <div class="Tag"><a th:href="@{'/genres/' + ${genreSecond.getGenre().getSlug()}}" href="/genres/slug.html" th:inline="text">[[#{${genreSecond.getGenre().getName()}}]]<span class="undefined-amount" th:text="'(' + ${genreSecond.getGenre().getBookCount()} + ')'">(134)</span></a>
-                                </div>
+                        <div th:class="${genreSecond.getCountChildren() > 0} ? 'Tags' : 'Tag'" th:each="genreSecond : ${mainGenres}" th:if="${genreSecond.parentId == genre.id}" >
+                            <a th:if="${genreSecond.getCountChildren() == 0}" th:href="@{'/genres/' + ${genreSecond.getSlug()}}" >[[${currentLocale == 'ru'} ? ${genreSecond.ruName} : ${genreSecond.enName}]]<span class="undefined-amount" th:text="'(' + ${genreSecond.getBookCount()} + ')'">(134)</span></a>
+                            <div class="Tags-title" th:if="${genreSecond.getCountChildren() > 0}">
+                                <div class="Tag"><a th:href="@{'/genres/' + ${genreSecond.getSlug()}}" >[[${currentLocale == 'ru'} ? ${genreSecond.ruName} : ${genreSecond.enName}]]<span class="undefined-amount" th:text="'(' + ${genreSecond.getBookCount()} + ')'">(134)</span></a></div>
                             </div>
-                                <div class="Tag" th:each="genreThird : ${genreSecond.getChildList()}"><a th:href="@{'/genres/' + ${genreThird.getSlug()}}" href="/genres/slug.html" th:inline="text">[[#{${genreThird.getName()}}]]<span class="undefined-amount" th:text="'(' + ${genreThird.getBookCount()} + ')'">(134)</span></a>
+                            <div class="Tag" th:each="genreThird : ${mainGenres}" th:if="${genreThird.parentId == genreSecond.id}"><a th:href="@{'/genres/' + ${genreThird.getSlug()}}" >[[${currentLocale == 'ru'} ? ${genreThird.ruName} : ${genreThird.enName}]]<span class="undefined-amount" th:text="'(' + ${genreThird.getBookCount()} + ')'">(134)</span></a>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="Section">
+                <div class="Tags Tags_genres" th:utext="${newGenre}">
                 </div>
             </div>
         </main>

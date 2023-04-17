@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="/assets/css/basic.min.css?v=65675850">
     <link rel="stylesheet" href="/assets/css/extra.min.css?v=65675850">
     <script defer src="/assets/js/scripts.min.js?v=65675850"></script>
+    <script src="/assets/js/ChangeBooksCountsInHeader.js"></script>
 <!--    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}">-->
 <!--    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}">-->
 </head>
@@ -33,18 +34,18 @@
                 <div class="Login-ins">
                     <div class="Login-step">
                         <div class="form-group">
-                            <input class="form-input" id="name" name="name" type="text" th:field="*{name}" th:placeholder="#{enter.name}"
+                            <input class="form-input" id="name" th:attr="data-locale=${currentLocale}" name="name" type="text" th:field="*{name}" th:placeholder="#{enter.name}"
                                    data-validate="require"/>
                         </div>
                         <div class="form-group form-group_row">
                             <div class="form-group">
                                 <input class="form-input form-input_phone" id="phone" name="phone" th:field="*{phone}" type="text"
-                                       th:placeholder="#{enter.phone}" data-mask="+7 (999) 999-99-99"
+                                       th:placeholder="#{enter.phone}" th:attr="data-locale=${currentLocale}" data-mask="+7 (999) 999-99-99"
                                        data-validate="require"/>
                             </div>
                             <div class="form-group form-group_key">
                                 <input class="form-input form-input_code" id="phoneCode" name="phoneCode" type="text"
-                                       th:placeholder="#{code.from.sms}" data-mask="999 999" data-validate="require key"/>
+                                       th:placeholder="#{code.from.sms}" th:attr="data-mask=${maskForCode}, data-lengthCode = ${lengthCode}, data-locale=${currentLocale}" data-mask="999 999" data-validate="require key"/>
                             </div>
                             <div class="form-group">
                                 <button class="btn btn_success btn_sm form-btn" type="button" name="submitPhone"
@@ -55,11 +56,11 @@
                         <div class="form-group form-group_row">
                             <div class="form-group">
                                 <input class="form-input form-input_mail" id="mail" th:field="*{email}" name="mail" type="text"
-                                       th:placeholder="#{enter.email}" data-validate="mail require"/>
+                                       th:placeholder="#{enter.email}" th:attr="data-locale=${currentLocale}" data-validate="mail require"/>
                             </div>
                             <div class="form-group form-group_key">
                                 <input class="form-input form-input_code" id="mailCode" name="mailCode" type="text"
-                                       th:placeholder="#{code.message}" data-mask="999 999" data-validate="require key"/>
+                                       th:placeholder="#{code.message}" th:attr="data-mask=${maskForCode}, data-lengthCode = ${lengthCode}, data-locale=${currentLocale}" data-mask="999 999" data-validate="require key"/>
                             </div>
                             <div class="form-group">
                                 <button class="btn btn_success btn_sm form-btn" type="button" name="submitMail"
@@ -69,7 +70,7 @@
                         </div>
                         <div class="form-group">
                             <input class="form-input form-input_password" id="pass" th:field="*{pass}" name="pass" type="text"
-                                   th:placeholder="#{enter.password}" data-validate="password require"/>
+                                   th:placeholder="#{enter.password}" th:attr="data-locale=${currentLocale}" data-validate="password require"/>
                         </div>
                         <div class="form-group form-group_center">
                             <button class="btn btn_primary form-btn" type="submit" name="registration" id="registration"

@@ -1,22 +1,29 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<div class="Cards Cards_refresh" th:fragment="pool">
-    <div class="Card" th:each="book : ${books}">
+<div class="Cards Cards_refresh" th:fragment="pool" >
+    <div class="Card" th:if="${books.books.size() > 0}" th:each="book : ${books.books}">
         <div class="Card-picture"><a th:href="@{'/books/' + ${book.slug}}"><img th:src="${book.image}" alt="card.jpg"/></a>
         <div class="Card-sale" th:if="${book.discount} > 0" th:text="${#numbers.formatInteger(book.discount * 100,1)} +' % скидка'"></div>
         <div class="Card-ribbon" th:if="${book.isBestseller}"><span class="Card-ribbonText">Бестселлер</span></div>
+            <a class="Card-status" title="Куплена" th:if="${book.getStatus() == 'PAID'}"><img src="/assets/img/icons/check.svg" alt="check.svg"/></a>
+            <a class="Card-status" title="Отложена" th:if="${book.getStatus() == 'KEPT'}"><img src="/assets/img/icons/heart.svg" alt="Отложена"></a>
+            <a class="Card-status" title="В корзине" th:if="${book.getStatus() == 'CART'}"><img src="/assets/img/icons/shopping-basket.svg" alt="В корзине"></a>
         </div>
         <div class="Card-content">
             <strong class="Card-title"><a th:href="@{'/books/' + ${book.slug}}" th:text="${book.title}">Техника</a>
             </strong>
-            <div class="Card-description" th:text="${book.authorsFullName().size() > 1} ? ${book.authorsFullName().get(0)} + ' и другие' : (${book.authorsFullName().size() == 1} ? ${book.authorsFullName().get(0)} : '')">Кондратенко Александр Петрович
+            <div class="Card-description" th:text="${book.getAuthors()}">Кондратенко Александр Петрович
             </div>
             <div class="Card-cost"><span class="Card-priceOld" th:text="${book.price}" th:if="${book.discount > 0}">₽300.00</span><span class="Card-price" th:text="${#numbers.formatDecimal(book.price - (book.discount * book.price),1,2)}">₽190.00</span>
             </div>
         </div>
     </div>
-    <div th:if="${category != 'without'}" class="Cards-footer Cards-footer_center"><a class="btn btn_primary" href="#" th:attr="data-refreshshow = ${category}" th:attrappend="data-refreshid = ${slug}" th:attrprepend="data-refreshquery=${searchWordDto.example}" data-refreshshow="recent"
-                                                     data-refreshoffset="1" data-refreshlimit="20" th:text="#{show.more}"></a>
+    <div class="Cards-footer Cards-footer_center" >
+        <a class="btn btn_primary" href="#" th:attr="data-refreshshow = ${category}" th:attrappend="data-refreshid = ${slug}"
+           th:attrprepend="data-refreshquery=${searchWordDto.example}" data-refreshshow="recent"
+           data-refreshoffset="1" data-refreshlimit="20" th:text="#{show.more}" th:style="${books.endList} ? 'display: none' : 'display: inline-flex'">
+        </a>
     </div>
+    <div class="Cart-messageInfo" th:style="${books.books.size() == 0} ? 'display: block' : 'display: none'" th:text="${textForBlankBooks}"></div>
 </div>
 </html>

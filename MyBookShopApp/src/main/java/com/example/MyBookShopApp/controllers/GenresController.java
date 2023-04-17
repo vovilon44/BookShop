@@ -1,16 +1,19 @@
 package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.data.services.BookService;
-import com.example.MyBookShopApp.data.GenresDtoFirst;
 import com.example.MyBookShopApp.data.services.GenresService;
-import com.example.MyBookShopApp.data.SearchWordDto;
+import com.example.MyBookShopApp.data.struct.genre.GenreEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -19,6 +22,11 @@ public class GenresController {
     private final GenresService genreService;
     private final BookService bookService;
 
+    @Value("${books.pool.limit.size}")
+    private Integer limit;
+    @Value("${books.pool.offset.size}")
+    private Integer offset;
+
     @Autowired
     public GenresController(GenresService genreService,BookService bookService) {
 
@@ -26,14 +34,11 @@ public class GenresController {
         this.bookService = bookService;
     }
 
-    @ModelAttribute("searchWordDto")
-    public SearchWordDto searchWordDto(){
-        return new SearchWordDto();
-    }
 
     @ModelAttribute("mainGenres")
-    public List<GenresDtoFirst> mainGenres(){
-        return genreService.getAllGenres();
+    public List<GenreEntity> mainGenres(){
+
+        return new ArrayList<>(genreService.getAllGenres());
     }
 
     @GetMapping("/genres")
@@ -41,14 +46,25 @@ public class GenresController {
         return "genres/index";
     }
 
+    @GetMapping("/genres/old")
+    public String mainnPage(){
+        return "genres/indexOld";
+    }
 
 
 
     @GetMapping("/genres/{slugGenre}")
-    public String genrePage(@PathVariable String slugGenre, Model model){
+    public String genrePage(@PathVariable String slugGenre, Model model, HttpServletRequest request,
+                            @CookieValue(name = "cartContents", required = false) String cartContents,
+                            @CookieValue(name = "keptContents", required = false) String keptContents){
+        model.addAttribute("textForBlankBooks", "Нет книг для данного жанра");
         model.addAttribute("genre", genreService.getGenreEntityFromSlug(slugGenre));
         model.addAttribute("genreTree", genreService.getGenreTree(slugGenre));
-        model.addAttribute("books", bookService.getBookFromGenre(slugGenre, 0, 20).getContent());
+        if (request.isUserInRole("ROLE_USER")) {
+            model.addAttribute("books", bookService.getBookFromGenreAuthorized(slugGenre, offset, limit));
+        } else {
+            model.addAttribute("books", bookService.getBookFromGenreNotAuthorized(slugGenre, offset, limit, cartContents, keptContents));
+        }
         return "genres/slug";
     }
 

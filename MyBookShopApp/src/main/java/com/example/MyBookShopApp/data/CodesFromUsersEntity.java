@@ -4,8 +4,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "sms_keys")
-public class SmsCode
+@Table(name = "codes_from_users")
+public class CodesFromUsersEntity
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,13 +13,18 @@ public class SmsCode
 
     private String code;
     private LocalDateTime expireTime;
+    private String contact;
+    @Column(columnDefinition = "INT NOT NULL")
+    private Integer tryCount;
 
-    public SmsCode(String code, Integer expireIn) {
+    public CodesFromUsersEntity(String contact, String code, Integer expireIn, Integer tryCount) {
         this.code = code;
+        this.contact = contact;
         this.expireTime = LocalDateTime.now().plusSeconds(expireIn);
+        this.tryCount = tryCount;
     }
 
-    public SmsCode() {
+    public CodesFromUsersEntity() {
     }
 
     public Boolean isExpired()
@@ -49,5 +54,21 @@ public class SmsCode
 
     public void setExpireTime(LocalDateTime expireTime) {
         this.expireTime = expireTime;
+    }
+
+    public String getContact() {
+        return contact;
+    }
+
+    public void setContact(String contact) {
+        this.contact = contact;
+    }
+
+    public Integer getTryCount() {
+        return tryCount;
+    }
+
+    public void setTryCount(Integer tryCount) {
+        this.tryCount = tryCount;
     }
 }

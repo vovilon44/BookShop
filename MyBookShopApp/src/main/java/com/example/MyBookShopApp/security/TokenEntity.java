@@ -14,6 +14,16 @@ public class TokenEntity
 
     private Date date;
 
+    public TokenEntity(String tokenKey, Date date) {
+        this();
+        this.tokenKey = tokenKey;
+        this.date = date;
+    }
+
+    public TokenEntity() {
+
+    }
+
     public String getTokenKey() {
         return tokenKey;
     }

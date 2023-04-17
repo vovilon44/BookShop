@@ -14,10 +14,11 @@
     <link rel="stylesheet" href="/assets/css/basic.min.css?v=16590401">
     <link rel="stylesheet" href="/assets/css/extra.min.css?v=16590401">
     <script defer src="/assets/js/scripts.min.js?v=16590401"></script>
+    <script src="/assets/js/ChangeBooksCountsInHeader.js"></script>
 </head>
 <body class="Site">
 <header class="Header"
-        th:replace="~{fragments/common_header_fragment :: head(main='menu-item menu-item_ACTIVE', status='unauthorized')}"></header>
+        th:replace="~{fragments/common_header_fragment :: head(main='menu-item', status=${authorized} ? 'authorized' : 'unauthorized')}"></header>
 <div class="Middle">
     <div class="wrap">
         <main class="Middle-main">
@@ -25,36 +26,19 @@
             </h1>
             <div class="Section">
                 <div class="Documents">
-                    <div class="Documents-wrap"><a class="Documents-item" href="/documents/slug.html">
-                        <div class="Documents-image"><img src="/assets/img/content/documents/1.jpg" alt="1.jpg"/>
-                        </div>
-                        <div class="Documents-content">
-                            <strong class="Documents-title">Публичная оферта
-                            </strong>
-                            <p>Согласно закону, публичная оферта – это предложение, которое, во-первых, адресовано
-                                неопределенному кругу лиц, во-вторых, содержит все существенные условия договора, и,
-                                в-третьих, достаточно определенно выражает намерение предприятия-оферента считать себя
-                                заключившим договор с любым
-                            </p>
-                            <p>Согласно закону, публичная оферта – это предложение, которое, во-первых, адресовано
-                                неопределенному кругу лиц, во-вторых, содержит все существенные условия договора, и,
-                                в-третьих, достаточно определенно выражает намерение предприятия-оферента считать себя
-                                заключившим договор с любым
-                            </p>
-                        </div>
-                    </a><a class="Documents-item" href="/documents/slug.html">
-                        <div class="Documents-image"><img src="/assets/img/content/documents/2.jpg" alt="2.jpg"/>
-                        </div>
-                        <div class="Documents-content">
-                            <strong class="Documents-title">Политика обработки персональных данных
-                            </strong>
-                            <p>Согласно закону, публичная оферта – это предложение, которое, во-первых, адресовано
-                                неопределенному кругу лиц, во-вторых, содержит все существенные условия договора, и,
-                                в-третьих, достаточно определенно выражает намерение предприятия-оферента считать себя
-                                заключившим договор с любым
-                            </p>
-                        </div>
-                    </a>
+                    <div class="Documents-wrap">
+                        <a class="Documents-item" th:href="@{'/documents/' + ${document.getSlug()}}" th:each="document : ${documents}">
+                            <div class="Documents-image"><img th:src="@{'/assets/img/content/documents/' + ${document.sortIndex} + '.jpg'}" alt="1.jpg"/>
+                            </div>
+                            <div class="Documents-content">
+                                <strong class="Documents-title" th:text="${document.title}">
+                                </strong>
+                                <div th:utext="${document.getPartText()}">
+
+                                </div>
+                            </div>
+                        </a>
+
                     </div>
                 </div>
             </div>

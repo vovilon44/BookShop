@@ -11,7 +11,7 @@ public class AddBookInCartOrKept
 
 //    @Around(value = "execution(* handleChangeBookStatus(..))")
 //    public void around(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-//        Logger.getLogger("CartKept..!!!").info("slug1: ");
+
 //        Object[] arguments = proceedingJoinPoint.getArgs();
 //        String slug = (String) arguments[0];
 //        String cartContents = (String) arguments[1];
@@ -37,9 +37,6 @@ public class AddBookInCartOrKept
 //                        arguments[1] = stringJoiner.toString();
 //                    } break;
 //            }
-//        }
-//        for (Object obj : arguments){
-//            Logger.getLogger("CartKept..").info("obj: " + obj);
 //        }
 //        proceedingJoinPoint.proceed(arguments);
 //    }

@@ -7,7 +7,8 @@
                 <div class="row-block Header-logo"><a class="logo" th:href="@{/}"><img class="logo-image"
                                                                                                 src="/assets/img/logo.png"
                                                                                                 alt="logo.png"/><span
-                        class="logo-text" th:text="#{header.bookshop.name}">BOOKSHOP</span></a>
+                        class="logo-text"
+                        th:text="#{header.bookshop.name}">BOOKSHOP</span></a>
                 </div>
                 <div class="Header-searchWrap row-block">
                     <div class="Header-searchLink">
@@ -67,5 +68,11 @@
             </nav>
         </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded",()=>{
+            changeIndexForLinkCards()
+        })
+
+    </script>
 </header>
 </html>

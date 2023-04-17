@@ -4,6 +4,7 @@ public class ContactConfirmationPayload
 {
     private String contact;
     private String code;
+    private Boolean login;
 
     public String getContact() {
         return contact;
@@ -19,6 +20,14 @@ public class ContactConfirmationPayload
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public boolean isLogin() {
+        return login;
+    }
+
+    public void setLogin(boolean login) {
+        this.login = login;
     }
 
     @Override

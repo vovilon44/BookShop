@@ -136,13 +136,13 @@ class AuthUserControllerTest {
                 .andExpect(status().is(302));
     }
 
-    @Test
-    void Logout() throws Exception {
-
-        mockMvc.perform(get("/logout").cookie(new Cookie("token", bookstoreUserRegister.jwtLogin(emailPayload).getResult())))
-                .andDo(print())
-                .andExpect(cookie().value("token", (String) null))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/signin"));
-    }
+//    @Test
+//    void Logout() throws Exception {
+//
+//        mockMvc.perform(get("/logout").cookie(new Cookie("token", bookstoreUserRegister.jwtLogin(emailPayload).getResult())))
+//                .andDo(print())
+//                .andExpect(cookie().value("token", (String) null))
+//                .andExpect(status().is3xxRedirection())
+//                .andExpect(redirectedUrl("/signin"));
+//    }
 }

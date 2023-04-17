@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
+@Table(name = "book_like2user")
 public class BookLike2UserEntity
 {
     @Id

@@ -63,8 +63,8 @@ public class Book2TagEntity {
     public String toString() {
         return "Book2TagEntity{" +
                 "id=" + id +
-                ", book=" + book.getTitle() +
-                ", tag=" + tag.getName() +
+                ", book=" + book +
+                ", tag=" + tag +
                 '}';
     }
 }

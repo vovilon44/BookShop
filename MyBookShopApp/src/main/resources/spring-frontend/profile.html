@@ -13,11 +13,12 @@
     <link rel="stylesheet" href="/assets/css/fonts.min.css?v=45744385"/>
     <link rel="stylesheet" href="/assets/css/basic.min.css?v=45744385"/>
     <link rel="stylesheet" href="/assets/css/extra.min.css?v=45744385"/>
-    <script src="/assets/js/scripts.min.js?v=45744385"></script>
+    <script defer src="/assets/js/scripts.min.js?v=45744385"></script>
+    <script src="/assets/js/ChangeBooksCountsInHeader.js"></script>
 </head>
 <body class="Site">
 <header class="Header"
-        th:replace="~{fragments/common_header_fragment :: head(status='authorized')}"></header>
+        th:replace="~{fragments/common_header_fragment :: head(main='menu-item',status='authorized')}"></header>
 <div class="Middle">
     <div class="Middle-top">
         <div class="wrap">
@@ -32,7 +33,7 @@
             <div class="Tabs Tabs_default">
                 <div class="Tabs-links"><a class="Tabs-link Tabs-link_ACTIVE" href="#basic">Основные сведения</a><a
                         class="Tabs-link" href="#transactions">История транзакций</a><a class="Tabs-link" href="#topup">Пополнить
-                    счет</a>
+                    счет</a><a class="Tabs-link" href="#sessions">Сессии</a>
                 </div>
                 <div class="Tabs-wrap">
                     <div class="Tabs-block" id="basic">
@@ -112,8 +113,8 @@
                                     </tr>
                                     </thead>
                                     <tbody >
-                                    <tr th:each="transaction : ${transactions}">
-                                        <td th:text="${transaction.time}">15 мая 2017 10:03
+                                    <tr th:each="transaction : ${transactions.transactions}">
+                                        <td th:text="${transaction.getDateTimeToString()}">
                                         </td>
                                         <td><span class="Transactions_textSuccess">
                             <strong th:text="${transaction.getValue() + ' р.'}">+500 р.
@@ -126,8 +127,8 @@
                                 </table>`
                             </div>
                             <div class="Transactions-footer Transactions-footer_center"><a
-                                    class="btn btn_primary Transactions-get" href="#" data-transactionoffset="4"
-                                    data-transactionlimit="10" data-transactionsort="asc">Показать еще</a>
+                                    class="btn btn_primary Transactions-get" href="#" data-transactionoffset="1"
+                                    data-transactionlimit="50" data-transactionsort="asc">Показать еще</a>
                             </div>
                         </div>
                     </div>
@@ -136,8 +137,9 @@
                             <div class="Topup-wrap">
                                 <strong class="Topup-title">Введите сумму, на которую хотите пополнить свой счет:
                                 </strong>
+
                                 <div class="form-group form-group_row Topup-group">
-                                    <input class="form-input" id="sum" name="sum" type="text"/><span>рублей</span>
+                                    <input class="form-input" th:value="${paymentSumTotal != null} ? ${paymentSumTotal} : ''" id="sum" name="sum" type="number" step="0.01"/><span>рублей</span>
                                 </div>
                                 <div class="form-group">
                                     <div class="Topup-btn">
@@ -145,8 +147,51 @@
                                         </button>
                                     </div>
                                 </div>
+                                <div class="form-group" ><h4 style="display: none" class="Topup-success"></h4></div>
                             </div>
                         </form>
+                    </div>
+                    <div class="Tabs-block" id="sessions">
+                        <div class="Transactions">
+                            <div class="tableWrap">
+                                <table class="table table_noMargin">
+                                    <thead>
+                                    <tr>
+                                        <th>Начало Сесии
+                                        </th>
+                                        <th>Последний сеанс
+                                        </th>
+                                        <th>Платформа
+                                        </th>
+                                        <th>Модель телефона
+                                        </th>
+                                        <th>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody >
+                                    <tr class="session" th:each="thisSession : ${sessions}">
+                                        <td th:text="${thisSession.dateCreation}">
+                                        </td>
+                                        <td th:text="${thisSession.dateLastSession}">
+                                        </td>
+                                        <td th:text="${thisSession.platform}">
+                                        </td>
+                                        <td th:text="${thisSession.phoneModel}">Пополнение счета
+                                        </td>
+                                        <td th:if="${thisSession.getToken()} != ${token}"><div class="footer_center"><a
+                                                class="btn btn_primary close-session" th:id="${thisSession.id}" href="#"
+                                                >Закрыть</a>
+                                        </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>`
+                            </div>
+                            <div class="Transactions-footer_center" th:if="${sessions.size() > 1}"><a
+                                    class="btn btn_primary close-all-sessions" href="#" >Закрыть все</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -155,5 +200,43 @@
 </div>
 <footer class="Footer" th:replace="~{fragments/common_footer_fragment :: footer}"></footer>
 <script src="/assets/plg/jQuery/jquery-3.5.1.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", ()=>{
+        document.querySelectorAll('.close-session').forEach((e) => {
+            e.addEventListener("click", deleteSession)
+        })
+        if (document.querySelector('.close-all-sessions')) {
+            document.querySelector('.close-all-sessions').addEventListener("click", deleteSessions)
+        }
+    })
+  async function deleteSession(e){
+      let formData = new FormData()
+      formData.append("id", e.target.id)
+       let response = await fetch('/api/session/remove', {method: 'POST', body: formData})
+      let result = await response.json()
+      if (result.result) {
+          e.target.closest('tr.session').remove()
+          if (document.querySelectorAll(".close-session").length === 0){
+              document.querySelector('.close-all-sessions').remove();
+          }
+      }
+    }
+
+    async function deleteSessions(e){
+        let formData = new FormData()
+        document.querySelectorAll(".close-session").forEach(e=>{
+            // ids.push(e.id)
+            formData.append("ids", e.id)
+        })
+        let response = await fetch('/api/sessions/remove', {method: 'POST', body: formData})
+        let result = await response.json()
+        if (result.result) {
+            document.querySelectorAll(".close-session").forEach(e=>{
+                e.closest('tr.session').remove()
+            })
+            e.target.remove()
+        }
+    }
+</script>
 </body>
 </html>

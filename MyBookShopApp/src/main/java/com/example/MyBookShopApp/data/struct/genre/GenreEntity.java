@@ -21,14 +21,17 @@ public class GenreEntity {
     private String slug;
 
     @Column(columnDefinition = "VARCHAR(255) NOT NULL")
-    private String name;
+    private String ruName;
 
-    @Transient
+    @Column(columnDefinition = "VARCHAR(255) NOT NULL")
+    private String enName;
+
+
     @OneToMany(mappedBy = "genre")
     private List<Book2GenreEntity> book2GenreEntityList = new ArrayList<>();
 
     @Transient
-    private Integer bookCount;
+    private Integer countChildren = 0;
 
 
     public int getId() {
@@ -55,12 +58,20 @@ public class GenreEntity {
         this.slug = slug;
     }
 
-    public String getName() {
-        return name;
+    public String getRuName() {
+        return ruName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setRuName(String ruName) {
+        this.ruName = ruName;
+    }
+
+    public String getEnName() {
+        return enName;
+    }
+
+    public void setEnName(String enName) {
+        this.enName = enName;
     }
 
     public List<Book2GenreEntity> getBook2GenreEntityList() {
@@ -72,11 +83,15 @@ public class GenreEntity {
     }
 
     public Integer getBookCount() {
-        return bookCount;
+        return book2GenreEntityList.size();
     }
 
-    public void setBookCount(Integer bookCount) {
-        this.bookCount = bookCount;
+    public Integer getCountChildren() {
+        return countChildren;
+    }
+
+    public void setCountChildren(Integer countChildren) {
+        this.countChildren = countChildren;
     }
 
     @Override
@@ -85,9 +100,10 @@ public class GenreEntity {
                 "id=" + id +
                 ", parentId=" + parentId +
                 ", slug='" + slug + '\'' +
-                ", name='" + name + '\'' +
+                ", ruName='" + ruName + '\'' +
+                ", enName='" + enName + '\'' +
                 ", book2GenreEntityList=" + book2GenreEntityList +
-                ", bookCount=" + bookCount +
+                ", countChildren=" + countChildren +
                 '}';
     }
 }

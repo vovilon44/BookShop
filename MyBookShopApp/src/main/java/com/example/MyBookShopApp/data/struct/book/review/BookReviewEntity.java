@@ -1,15 +1,9 @@
 package com.example.MyBookShopApp.data.struct.book.review;
 
 import com.example.MyBookShopApp.data.Book;
+import com.example.MyBookShopApp.security.BookstoreUser;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import com.example.MyBookShopApp.security.BookstoreUser;
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -36,7 +30,7 @@ public class BookReviewEntity {
     private String text;
 
     @OneToMany(mappedBy = "review")
-    private List<BookReviewLikeEntity> bookReviewLikeEntityList = new ArrayList<>();
+    private List<BookReviewLikeEntity> bookReviewLikeEntityList;
 
     public String getShowText(){
         String showText = "";
@@ -75,12 +69,22 @@ public class BookReviewEntity {
     }
 
 
-    public Double getRating() {
-        return ((double) bookReviewLikeEntityList.stream().filter(e -> e.getValue() > 0).count()) / bookReviewLikeEntityList.size();
+    public Double getRatingForReview() {
+        if (bookReviewLikeEntityList.size() > 0) {
+            return ((double) bookReviewLikeEntityList.stream().filter(e -> e.getValue() > 0).count()) / bookReviewLikeEntityList.size();
+        } else {
+            return 0.0;
+        }
+
+
     }
 
     public Integer getRang() {
-        return bookReviewLikeEntityList.stream().reduce(0, (x, e)-> x+e.getValue(), (x, e) -> x+e) ;
+        if (bookReviewLikeEntityList.size() > 0) {
+            return bookReviewLikeEntityList.stream().reduce(0, (x, e) -> x + e.getValue(), (x, e) -> x + e);
+        } else {
+            return 0;
+        }
     }
 
     public int getId() {
@@ -140,8 +144,8 @@ public class BookReviewEntity {
                 ", user=" + user.getName() +
                 ", time=" + time + + '\'' +
                 ", textShow='" + getShowText() + "\' \n" +
-                ", rang =" + getRang() +
-                "rating=" + getRating() +
+//                ", rang =" + getRang() +
+                "rating=" + getRatingForReview() +
                 ", bookReviewLikeEntityList=" + bookReviewLikeEntityList +
                 '}';
     }

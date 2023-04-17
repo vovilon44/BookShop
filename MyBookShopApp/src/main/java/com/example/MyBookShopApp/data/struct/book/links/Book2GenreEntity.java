@@ -44,4 +44,13 @@ public class Book2GenreEntity {
     public void setGenre(GenreEntity genre) {
         this.genre = genre;
     }
+
+    @Override
+    public String toString() {
+        return "Book2GenreEntity{" +
+                "id=" + id +
+                ", book=" + book +
+                ", genre=" + genre.getRuName() +
+                '}';
+    }
 }

@@ -19,12 +19,19 @@ public class BookFile {
 
     private String path;
 
+    @Transient
+    private Long size;
+
     @ManyToOne
     @JoinColumn(name = "book_id", referencedColumnName = "id")
     private Book book;
 
     public String getBookFileExtensionString(){
         return BookFileType.getExtensionStringByTypeID(typeId);
+    }
+
+    public String getBookFileTypeDescription(){
+        return BookFileType.getFileTypeDescription(typeId);
     }
 
     public Integer getId() {
@@ -65,5 +72,19 @@ public class BookFile {
 
     public void setBook(Book book) {
         this.book = book;
+    }
+
+    public String getSize() {
+        if (size > 1024 * 1024){
+            return ((Math.round((double) size / (1024 * 1024)) * 100 ) / 100) + " MB";
+        } else if (size > 1024) {
+            return ((Math.round((double) size / 1024) * 100 ) / 100) + " KB";
+        } else {
+            return size + " Byte";
+        }
+    }
+
+    public void setSize(Long size) {
+        this.size = size;
     }
 }

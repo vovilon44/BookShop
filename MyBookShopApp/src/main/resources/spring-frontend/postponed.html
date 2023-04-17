@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="/assets/css/basic.min.css?v=04238027">
     <link rel="stylesheet" href="/assets/css/extra.min.css?v=04238027">
     <script defer src="/assets/js/scripts.min.js?v=04238027"></script>
+    <script src="/assets/js/ChangeBooksCountsInHeader.js"></script>
 </head>
 <body class="Site">
 <header class="Header"
@@ -23,7 +24,6 @@
         <main class="Middle-main">
             <h1 class="Middle-title" th:text="#{postponed}">Отложенное
             </h1>
-            <h3 th:if="${isKeptEmpty}">Отложенных книг нет</h3>
             <form class="form Cart Cart_postponed" action="#" method="post">
                 <div class="Cart-product" th:each="book : ${bookKept}">
                     <div class="Cart-block Cart-block_row">
@@ -33,9 +33,9 @@
                         </div>
                         <div class="Cart-block Cart-block_row">
                             <div class="Cart-block Cart-block_info">
-                                <div class="Cart-author"><a href="#" th:text="${book.authorsFullName().size() > 1} ? ${book.authorsFullName().get(0)} + ' и другие' : (${book.authorsFullName().size() == 1} ? ${book.authorsFullName().get(0)} : '')">Борис Васильевич Бедный</a>
+                                <div class="Cart-author"><a href="#" th:text="${book.getAuthors()}">Борис Васильевич Бедный</a>
                                 </div>
-                                <div class="Cart-title"><a href="#" th:text="${book.title}">Жизнь</a>
+                                <div class="Cart-title"><a th:href="@{'/books/' + ${book.slug}}" th:text="${book.title}">Жизнь</a>
                                 </div>
                                 <div class="Cart-rating"><span class="Rating"><span class="Rating-stars"><span
                                         class="Rating-star Rating-star_view">
@@ -83,14 +83,14 @@
                                 <div class="Cart-buttons">
                                     <div class="Cart-btn">
                                         <button class="btn btn_primary btn_outline" data-sendstatus="CART"
-                                                data-bookid="[1122]"><span class="btn-icon"><img
+                                                th:attr="data-bookid=${book.slug}"><span class="btn-icon"><img
                                                 src="/assets/img/icons/shopping-basket.svg" alt="shopping-basket.svg"/></span><span
                                                 class="btn-content" th:text="#{buy}">Купить</span>
                                         </button>
                                     </div>
                                     <div class="Cart-btn">
                                         <button class="btn btn_danger btn_outline" data-sendstatus="UNLINK"
-                                                th:attr="data-bookid=${'kept/remove/' + book.slug}"
+                                                th:attr="data-bookid=${book.slug}"
                                                 data-bookid="[1122]"><span class="btn-icon"><img
                                                 src="/assets/img/icons/trash.svg" alt="trash.svg"/></span><span
                                                 class="btn-content" th:text="#{remove}">Удалить</span>
@@ -112,20 +112,38 @@
                     </div>
                 </div>
 
-                <div class="Cart-total" th:if="${!isKeptEmpty}">
+                <div class="Cart-total" th:if="${bookKept.size() > 0}">
                     <div class="Cart-block Cart-block_total">
                     </div>
                     <div class="Cart-block">
                         <button class="btn btn_success btn_md Cart-buyAll" data-sendstatus="CART"
-                                data-bookid="[1111, 1122, 1133]" th:text="#{buy.all}">Купить все
+                                th:text="#{buy.all}">Купить все
                         </button>
                     </div>
                 </div>
+                <div class="Cart-messageInfo" th:if="${bookKept.size() == 0}">Отложенных книг нет</div>
             </form>
         </main>
     </div>
 </div>
 <footer class="Footer" th:replace="~{fragments/common_footer_fragment :: footer}"></footer>
+<script>
+    document.addEventListener("DOMContentLoaded", ()=>{
+        if (document.querySelector('.Cart-buyAll')) {
+            document.querySelector('.Cart-buyAll').addEventListener('mousedown', buyAll)
+        }
+    })
+    function buyAll(e){
+        let bookIds = []
+        for (let elem of document.querySelectorAll('.btn_primary')){
+            bookIds.push(elem.dataset.bookid)
+        }
+        if (bookIds.length > 0) {
+            e.target.dataset.bookid = bookIds.join()
+            console.log("e.target.dataset.bookid: ", e.target.dataset.bookid)
+        }
+    }
+</script>
 <script src="/assets/plg/jQuery/jquery-3.5.1.min.js"></script>
 </body>
 </html>

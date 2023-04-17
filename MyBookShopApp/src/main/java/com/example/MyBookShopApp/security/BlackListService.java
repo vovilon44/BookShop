@@ -17,17 +17,9 @@ public class BlackListService
         this.blackListRepository = blackListRepository;
     }
 
-    public void setToken(HttpServletRequest request){
-        if (request.getCookies()!=null){
-            for (Cookie cookie : request.getCookies()){
-                if (cookie.getName().equals("token")){
-                    TokenEntity tokenEntity = new TokenEntity();
-                    tokenEntity.setTokenKey(cookie.getValue());
-                    tokenEntity.setDate(new Date());
-                    blackListRepository.save(tokenEntity);
-                }
-
-            }
+    public void addToken(String token) {
+        if (token != null) {
+            blackListRepository.save(new TokenEntity(token, new Date()));
         }
     }
 

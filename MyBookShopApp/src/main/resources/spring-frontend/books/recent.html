@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="/assets/css/basic.min.css?v=09585989">
     <link rel="stylesheet" href="/assets/css/extra.min.css?v=09585989">
     <script defer src="/assets/js/scripts.min.js?v=09585989"></script>
+    <script src="/assets/js/ChangeBooksCountsInHeader.js"></script>
 </head>
 <body class="Site">
 <header class="Header"
@@ -22,7 +23,7 @@
     <div class="wrap">
         <main class="Middle-main">
             <ul class="breadcrumbs"
-                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category=#{topbar.news})}"></ul>
+                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category=#{topbar.news}, link = @{/genres}, linkName = #{books})}"></ul>
             <div class="Section">
                 <div class="Section-header">
                     <h1 class="Section-title" th:text="#{topbar.news}">Новинки

@@ -6,7 +6,7 @@ $(document).ready(function () {
         });
     });
 
-    $('#myPopup__close','#myOverlay').click(function () {
+    $('#myPopup__close, #myOverlay').click(function () {
         $('#myPopup').animate({opacity: 1}, 198, function () {
             $(this).css('display', 'none');
             $('#myOverlay').fadeOut(297);

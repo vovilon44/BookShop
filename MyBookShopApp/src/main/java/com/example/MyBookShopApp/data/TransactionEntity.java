@@ -4,6 +4,7 @@ import com.example.MyBookShopApp.security.BookstoreUser;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 
@@ -17,8 +18,7 @@ public class TransactionEntity
 
     private Double value;
 
-    @Column(columnDefinition = "DATE NOT NULL")
-    private LocalDate time;
+    private LocalDateTime time;
 
     private String description;
 
@@ -29,6 +29,17 @@ public class TransactionEntity
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private BookstoreUser user;
+
+    @Transient
+    private String dateTimeToString;
+
+    public String getDateTimeToString() {
+        return dateTimeToString;
+    }
+
+    public void setDateTimeToString(String dateTimeToString) {
+        this.dateTimeToString = dateTimeToString;
+    }
 
     public Integer getId() {
         return id;
@@ -46,11 +57,11 @@ public class TransactionEntity
         this.value = value;
     }
 
-    public LocalDate getTime() {
+    public LocalDateTime getTime() {
         return time;
     }
 
-    public void setTime(LocalDate time) {
+    public void setTime(LocalDateTime time) {
         this.time = time;
     }
 

@@ -5,12 +5,14 @@ import com.example.MyBookShopApp.data.struct.book.file.FileDownloadEntity;
 import com.example.MyBookShopApp.data.struct.book.links.*;
 import com.example.MyBookShopApp.data.struct.book.review.BookReviewEntity;
 import com.example.MyBookShopApp.data.struct.tag.TagEntity;
+import com.example.MyBookShopApp.security.BookstoreUser;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +25,7 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(columnDefinition = "DATE NOT NULL")
     private Date pubDate;
     @Column(columnDefinition = "SMALLINT NOT NULL")
     private int isBestseller;
@@ -37,33 +40,53 @@ public class Book {
     private Integer price;
     @Column(columnDefinition = "NUMERIC NOT NULL DEFAULT 0")
     private double discount;
+    @Transient
+    private String authors;
 
-    @JsonGetter("authors")
-    public List<String> authorsFullName(){
-        return book2AuthorEntityList.stream().map(e->e.authorsFullName()).collect(Collectors.toList());
-    }
+    @Transient
+    private BookstoreUser user;
+    @Transient
+    private String status;
 
-    @JsonGetter("tags")
-    public List<String> tagsBook(){
-        return book2TagEntityList.stream().map(e->e.tagName()).collect(Collectors.toList());
-    }
 
-    @JsonGetter("rang")
-    public Double rangBook(){
-        Double result = book2UserEntityList.stream().reduce(0.0, (x, y)->{
-            if (y.getTypeId() == 3){
-                return x + 1;
-            } else if (y.getTypeId() == 2) {
-               return x + 0.7;
-            } else if (y.getTypeId() == 1) {
-                return x + 0.4;
-            } else {
-                return x;
+
+//    @JsonGetter("authors")
+//    public String getAuthors(){
+//        List<String> authors = book2AuthorEntityList.stream().map(e->e.authorsFullName()).collect(Collectors.toList());
+//        if (authors.size() > 1){
+//            return authors.get(0) + " и другие";
+//        } else if (authors.size() == 1){
+//            return authors.get(0);
+//        }
+//        return "Автор неизвестен";
+//    }
+
+    @JsonGetter("status")
+    public String getStatus() {
+        if (user != null && book2UserEntityList != null) {
+            for (Book2UserEntity book2User : book2UserEntityList) {
+                if (book2User.getUser().getId() == user.getId()) {
+                    switch (book2User.getTypeId()) {
+                        case 1:
+                            return "KEPT";
+                        case 2:
+                            return "CART";
+                        case 3:
+                            return "PAID";
+                        default:
+                            return "";
+                    }
+                }
             }
-        }, (x,y) -> x + y);
-        return result;
+        } else if (status != null){
+            return status;
+        }
+        return "";
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     @JsonIgnore
     @OneToMany(mappedBy = "book")
@@ -71,22 +94,21 @@ public class Book {
 
     @JsonIgnore
     @OneToMany(mappedBy = "book")
-    private List<Book2TagEntity> book2TagEntityList = new ArrayList<>();
+    private List<Book2TagEntity> book2TagEntityList;
     @JsonIgnore
     @OneToMany(mappedBy = "book")
-    private List<Book2GenreEntity> book2GenreEntityList = new ArrayList<>();
+    private List<Book2GenreEntity> book2GenreEntityList;
     @JsonIgnore
     @OneToMany(mappedBy = "book")
-    private List<Book2UserEntity> book2UserEntityList = new ArrayList<>();
+    private List<Book2UserEntity> book2UserEntityList;
     @JsonIgnore
     @OneToMany(mappedBy = "book")
-    private List<FileDownloadEntity> fileDownloadEntityList = new ArrayList<>();
+    private List<FileDownloadEntity> fileDownloadEntityList;
 
-    @Transient
-    private HashMap<Integer, Integer> bookLikeMap;
+
     @JsonGetter("rating")
     public Integer getBookRating(){
-        if (bookLike2UserEntityList.size() > 0) {
+        if (bookLike2UserEntityList != null && bookLike2UserEntityList.size() > 0) {
             return (int) bookLike2UserEntityList.stream().mapToDouble(e -> e.getLikeValue()).average().getAsDouble();
         }
         else {
@@ -94,30 +116,43 @@ public class Book {
         }
     }
 
-    @JsonGetter("ratingReviews")
-    public Double getBookRatingReviews(){
+    @JsonIgnore
+    public Double getBookRatingAllReviews(){
+
+
         if (bookReviewEntityList.size() > 0) {
-            return bookReviewEntityList.stream().mapToDouble(e -> e.getRating()).average().getAsDouble();
+            return bookReviewEntityList.stream().mapToDouble(e -> e.getRatingForReview()).filter(e-> e > 0).average().getAsDouble();
         }
         else {
             return  0.0;
         }
     }
 
+    @JsonIgnore
+    public List<BookReviewEntity> getBooksSortedReviews(){
+        bookReviewEntityList.sort(Comparator.comparing(BookReviewEntity::getRang).reversed());
+        return bookReviewEntityList;
+    }
 
     @JsonIgnore
     @OneToMany(mappedBy = "book")
-    private List<BookLike2UserEntity> bookLike2UserEntityList = new ArrayList<>();
+    private List<BookLike2UserEntity> bookLike2UserEntityList;
 
 
     @Transient
-    @OneToMany(mappedBy = "book")
-    private List<TransactionEntity> balanceTransactionEntityList = new ArrayList<>();
     @JsonIgnore
     @OneToMany(mappedBy = "book")
-    private List<BookReviewEntity> bookReviewEntityList = new ArrayList<>();
+    private List<TransactionEntity> balanceTransactionEntityList;
+    @JsonIgnore
+    @OneToMany(mappedBy = "book")
+    private List<BookReviewEntity> bookReviewEntityList;
 
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "book")
+    private List<Book2UserHistory> book2UserHistoryList;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "book")
     private List<BookFile> bookFileList = new ArrayList<>();
 
@@ -128,9 +163,6 @@ public class Book {
     public void setBook2TagEntityList(List<Book2TagEntity> book2TagEntityList) {
         this.book2TagEntityList = book2TagEntityList;
     }
-
-    @Transient
-    private double rating;
 
     @Transient
     private List<TagEntity> tags;
@@ -256,14 +288,6 @@ public class Book {
         this.bookReviewEntityList = bookReviewEntityList;
     }
 
-    public double getRating() {
-        return rating;
-    }
-
-    public void setRating(double rating) {
-        this.rating = rating;
-    }
-
     public List<TagEntity> getTags() {
         return tags;
     }
@@ -288,6 +312,7 @@ public class Book {
         this.bookLike2UserEntityList = bookLike2UserEntityList;
     }
 
+    @JsonIgnore
     public HashMap<Integer, Integer> getBookLikeMap() {
         HashMap<Integer, Integer> map = new HashMap<>();
         bookLike2UserEntityList.forEach(e->{map.put(e.getLikeValue(), map.get(e.getLikeValue()) == null ? 1 : map.get(e.getLikeValue()) + 1);
@@ -295,8 +320,35 @@ public class Book {
         return map;
     }
 
-    public void setBookLikeMap(HashMap<Integer, Integer> bookLikeMap) {
-        this.bookLikeMap = bookLikeMap;
+    public BookstoreUser getUser() {
+        return user;
+    }
+
+    public void setUser(BookstoreUser user) {
+        this.user = user;
+    }
+
+    public List<Book2UserHistory> getBook2UserHistoryList() {
+        return book2UserHistoryList;
+    }
+
+    public void setBook2UserHistoryList(List<Book2UserHistory> book2UserHistoryList) {
+        this.book2UserHistoryList = book2UserHistoryList;
+    }
+
+    public String getAuthors() {
+        List<String> authorsList = book2AuthorEntityList.stream().map(e -> e.authorsFullName()).collect(Collectors.toList());
+        if (authorsList.size() > 0) {
+            return authorsList.get(0) + (authorsList.size() > 1 ? " и другие" : "");
+        } else if (authors != null) {
+            return authors + " и другие";
+        } else {
+            return "Автор неизвестен";
+        }
+    }
+
+    public void setAuthors(String authors) {
+        this.authors = authors;
     }
 
     @Override

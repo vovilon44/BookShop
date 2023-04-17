@@ -1,5 +1,6 @@
 package com.example.MyBookShopApp.data.services;
 
+import com.example.MyBookShopApp.data.Book;
 import com.example.MyBookShopApp.data.repositories.BookLike2UserRepository;
 import com.example.MyBookShopApp.data.struct.book.links.BookLike2UserEntity;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
@@ -25,11 +26,15 @@ public class BookLike2UserService
         this.userRegister = userRegister;
     }
 
-    public void updateBookLike2UserLikeValue(String slug, Integer value) throws BookstoreApiWrongParameterException {
-        BookLike2UserEntity bookLike2User = bookLike2UserRepository.findBookLike2UserEntityByBook_SlugAndUser_Email(slug, userRegister.getCurrentUser().getEmail());
+    public boolean updateBookLike2UserLikeValue(String slug, Integer value) throws BookstoreApiWrongParameterException {
+        BookLike2UserEntity bookLike2User = bookLike2UserRepository.findByBook_SlugAndUser(slug, userRegister.getCurrentUser());
         if (bookLike2User == null){
             bookLike2User = new BookLike2UserEntity();
-            bookLike2User.setBook(bookService.getBookFromSlug(slug));
+            Book book = bookService.getBookFromSlug(slug);
+            if (book == null){
+                return false;
+            }
+            bookLike2User.setBook(book);
             bookLike2User.setUser(userRegister.getCurrentUser());
             bookLike2User.setPubDate(new Date());
             bookLike2User.setLikeValue(value);
@@ -38,5 +43,13 @@ public class BookLike2UserService
         bookLike2User.setLikeValue(value);
         bookLike2User.setPubDate(new Date());
         bookLike2UserRepository.save(bookLike2User);
+        return true;
+    }
+
+    public BookLike2UserEntity getRatingBookForUser(String slug)
+    {
+            return bookLike2UserRepository.findByBook_SlugAndUser(slug, userRegister.getCurrentUser());
+
+
     }
 }

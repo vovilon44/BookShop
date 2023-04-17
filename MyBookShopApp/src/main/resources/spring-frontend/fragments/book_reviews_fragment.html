@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="reviewBlock">
     <div class="Comments">
-        <div class="Comment" th:if="${reviewsBook.size() > 0}" th:each="review : ${reviewsBook}">
+        <div class="Comment" th:if="${book.getBooksSortedReviews().size() > 0}" th:each="review : ${book.getBooksSortedReviews()}">
             <div class="Comment-column Comment-column_pict">
                 <div class="Comment-avatar">
                 </div>
@@ -11,7 +11,7 @@
                 <header class="Comment-header">
                     <div>
                         <strong class="Comment-title" >[[${review.getUser().getName()}]]<span class="Comment-rating">
-                            <span class="Rating Rating_comment"><span class="Rating-stars"><span th:class="'Rating-star' + (${review.getRating() >= 0.2} ? 'Rating-star_view' : '')">
+                            <span class="Rating Rating_comment"><span class="Rating-stars"><span th:class="'Rating-star' + (${review.getRatingForReview() >= 0.2} ? 'Rating-star_view' : '')">
                               <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
                                 <g>
                                   <g>
@@ -19,7 +19,7 @@
                                           d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
                                   </g>
                                 </g>
-                              </svg></span><span th:class="'Rating-star' + (${review.getRating() >= 0.4} ? 'Rating-star_view' : '')">
+                              </svg></span><span th:class="'Rating-star' + (${review.getRatingForReview() >= 0.4} ? 'Rating-star_view' : '')">
                               <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
                                 <g>
                                   <g>
@@ -27,7 +27,7 @@
                                           d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
                                   </g>
                                 </g>
-                              </svg></span><span th:class="'Rating-star' + (${review.getRating() >= 0.6} ? 'Rating-star_view' : '')">
+                              </svg></span><span th:class="'Rating-star' + (${review.getRatingForReview() >= 0.6} ? 'Rating-star_view' : '')">
                               <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
                                 <g>
                                   <g>
@@ -35,7 +35,7 @@
                                           d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
                                   </g>
                                 </g>
-                              </svg></span><span th:class="'Rating-star' + (${review.getRating() >= 0.8} ? 'Rating-star_view' : '')">
+                              </svg></span><span th:class="'Rating-star' + (${review.getRatingForReview() >= 0.8} ? 'Rating-star_view' : '')">
                               <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
                                 <g>
                                   <g>
@@ -43,7 +43,7 @@
                                           d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
                                   </g>
                                 </g>
-                              </svg></span><span th:class="'Rating-star' + (${review.getRating() == 1} ? 'Rating-star_view' : '')">
+                              </svg></span><span th:class="'Rating-star' + (${review.getRatingForReview() == 1} ? 'Rating-star_view' : '')">
                               <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
                                 <g>
                                   <g>

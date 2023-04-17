@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="/assets/css/fonts.min.css?v=40130258">
     <link rel="stylesheet" href="/assets/css/basic.min.css?v=40130258">
     <link rel="stylesheet" href="/assets/css/extra.min.css?v=40130258">
+    <script src="/assets/js/ChangeBooksCountsInHeader.js"></script>
     <script defer src="/assets/js/scripts.min.js?v=40130258"></script>
 </head>
 <body class="Site">
@@ -21,7 +22,7 @@
     <div class="wrap">
         <main class="Middle-main">
             <ul class="breadcrumbs"
-                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category=${author.getName()})}"></ul>
+                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category=${author.getName()}, link = @{/authors}, linkName = #{authors})}"></ul>
             <h1 class="Middle-title" th:text="${author.getName()}">Борис Васильевич Бедный
             </h1>
             <div class="Section">

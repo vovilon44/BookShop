@@ -1,6 +1,7 @@
 package com.example.MyBookShopApp.data.services;
 
 import com.example.MyBookShopApp.data.repositories.BookFileRepository;
+import com.example.MyBookShopApp.data.repositories.FileDownloadRepository;
 import com.example.MyBookShopApp.data.struct.book.file.BookFile;
 import liquibase.util.file.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,25 +30,27 @@ public class ResourceStorage
 
     private final BookFileRepository bookFileRepository;
 
+    Logger logger = Logger.getLogger(this.getClass().getName());
+
     @Autowired
     public ResourceStorage(BookFileRepository bookFileRepository) {
         this.bookFileRepository = bookFileRepository;
     }
 
     public String saveNewBookImage(MultipartFile file, String slug) throws IOException {
-        Logger.getLogger("ResourceStorage").info("Begin saveFile...!!!");
-        Logger.getLogger("ResourceStorage").info("uploadPath: " + uploadPath);
+        logger.info("Begin saveFile...!!!");
+        logger.info("uploadPath: " + uploadPath);
         String resourceURI = null;
         if(!file.isEmpty()){
             if(!new File(uploadPath).exists()){
                 Files.createDirectories(Paths.get(uploadPath));
-                Logger.getLogger("ResourceStorage").info("create image folder in" + uploadPath);
+                logger.info("create image folder in" + uploadPath);
             }
             String fileName = slug + "." + FilenameUtils.getExtension(file.getOriginalFilename());
             Path path = Paths.get(uploadPath,fileName);
             resourceURI = "/sourceFileUpload/" + fileName;
             file.transferTo(path);
-            Logger.getLogger("ResourceStorage").info(fileName + " upload Ok");
+            logger.info(fileName + " upload Ok");
         }
         return resourceURI;
     }
@@ -72,4 +75,12 @@ public class ResourceStorage
         Path path = Paths.get(downloadPath, bookFile.getPath());
         return Files.readAllBytes(path);
     }
+
+    public Long getBookFileSize(String path) {
+       Long size = new File(downloadPath + path).length();
+        return size;
+    }
+
+
+
 }
