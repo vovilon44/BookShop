@@ -1,11 +1,9 @@
-package com.example.MyBookShopApp.data.struct.book.review;
-
+package com.example.MyBookShopApp.data.struct.other;
 
 import com.example.MyBookShopApp.security.BookstoreUser;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "message")
@@ -19,7 +17,7 @@ public class MessageEntity {
     private LocalDate time;
 
     @ManyToOne
-    @JoinColumn(name = "iser_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private BookstoreUser user;
 
     @Column(columnDefinition = "VARCHAR(255)")
@@ -55,6 +53,8 @@ public class MessageEntity {
     }
 
     public void setUser(BookstoreUser user) {
+        this.name = user.getName();
+        this.email = user.getEmail();
         this.user = user;
     }
 
@@ -88,5 +88,18 @@ public class MessageEntity {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    @Override
+    public String toString() {
+        return "MessageEntity{" +
+                "id=" + id +
+                ", time=" + time +
+                ", user=" + user +
+                ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", subject='" + subject + '\'' +
+                ", text='" + text + '\'' +
+                '}';
     }
 }

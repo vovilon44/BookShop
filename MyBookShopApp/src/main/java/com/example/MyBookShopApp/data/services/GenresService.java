@@ -1,24 +1,22 @@
 package com.example.MyBookShopApp.data.services;
 
+import com.example.MyBookShopApp.data.GenreDto;
 import com.example.MyBookShopApp.data.repositories.GenreRepository;
 import com.example.MyBookShopApp.data.struct.genre.GenreEntity;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.TreeMap;
 
 @Service
 public class GenresService {
 
 
-    private GenreRepository genreRepository;
+    private final GenreRepository genreRepository;
 
     @Autowired
     public GenresService(GenreRepository genreRepository) {
@@ -59,19 +57,64 @@ public class GenresService {
     }
 
 
-    public List<GenreEntity> getAllGenres() {
-        List<GenreEntity> genres = genreRepository.findAll();
-        genres.forEach(e -> {
-            for (GenreEntity genre : genres) {
-                if (genre.getParentId() != null && genre.getParentId() == e.getId()) {
-                    e.setCountChildren(e.getCountChildren() + 1);
+
+    public String getElementsHtml(String locale) {
+        List<GenreEntity> genres = genreRepository.findAllByOrderByParentIdAscIdDesc();
+        List<GenreDto> genreDtoList = new ArrayList<>();
+        while (genres.get(genres.size() - 1).getParentId() == null) {
+            genreDtoList.add(new GenreDto(genres.get(genres.size() - 1).getId(), changeFromTagToTags(getTagElement(genres.get(genres.size() - 1), locale)) ));
+            genres.remove(genres.size() - 1);
+        }
+        for (GenreEntity genre : genres) {
+            for (GenreDto genreDto : genreDtoList){
+                if (genreDto.getIds().contains(genre.getParentId())){
+                    genreDto.setElement(addGenreElement(genreDto, genre.getParentId(), getTagElement(genre, locale)));
+                    genreDto.addId(genre.getId());
                 }
             }
-        });
-        return genres;
+        }
+        for (GenreDto genreDto : genreDtoList){
+            for (Element element : genreDto.getElement().getElementsByAttribute("id")){
+                element.removeAttr("id");
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (GenreDto genreDto : genreDtoList) {
+            sb.append(genreDto.getElement());
+        }
+
+        return sb.toString();
     }
 
+    private Element addGenreElement(GenreDto genreDto, int id, Element newElement) {
+        Element elementDto = genreDto.getElement();
+        Element elementForChange = elementDto.getElementById(String.valueOf(id));
+        if (elementForChange.parent().hasClass("Tags-title")){
+            elementForChange.parents().get(1).appendChild(newElement);
+        } else {
+            Element parent = elementForChange.parent();
+            parent.appendChild(changeFromTagToTags(elementForChange).appendChild(newElement));
+            Elements parents = elementForChange.parents();
+            if (parents.size() >= 3) {
+                parents.get(2).addClass("Tags_embed");
+            }
+        }
+        return elementDto;
+    }
 
-//        return genreRepository.findAllByOrderByParentIdDesc();
+    private Element changeFromTagToTags(Element element){
+        return new Element("div").addClass("Tags").appendChild(new Element("div").addClass("Tags-title").appendChild(element));
+
+    }
+
+    private Element getTagElement(GenreEntity genre, String locale){
+        return new Element("div")
+                .addClass("Tag").id(String.valueOf(genre.getId()))
+                .appendChild(new Element("a")
+                        .attr("href", "/genres/" + genre.getSlug())
+                        .text(locale.equals("ru") ? genre.getRuName() : genre.getEnName())
+                        .appendChild(new Element("span")
+                                .addClass("undefined-amount").text("("+ genre.getBookCount() +")")));
+    }
 
 }
