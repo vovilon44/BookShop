@@ -1,13 +1,15 @@
 package com.example.MyBookShopApp.data.telegram;
 
 import com.example.MyBookShopApp.data.repositories.BookFileRepository;
-import com.example.MyBookShopApp.data.services.*;
+import com.example.MyBookShopApp.data.services.Book2UserService;
+import com.example.MyBookShopApp.data.services.BookService;
+import com.example.MyBookShopApp.data.services.CodeSenderService;
+import com.example.MyBookShopApp.data.services.PaymentService;
 import com.example.MyBookShopApp.data.struct.book.file.BookFile;
 import com.example.MyBookShopApp.data.struct.book.file.BookFileType;
 import com.example.MyBookShopApp.data.struct.book.links.Book2UserEntity;
 import com.example.MyBookShopApp.security.BookstoreUser;
 import com.example.MyBookShopApp.security.BookstoreUserDetailsService;
-import com.example.MyBookShopApp.security.BookstoreUserRegister;
 import com.example.MyBookShopApp.security.ContactConfirmationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -114,9 +116,6 @@ public class BotService {
             randomValue = random.nextInt(1000);
             sb.append(String.valueOf(randomValue).length()).append(randomValue).append(String.valueOf(randomValue + bookId).length()).append(randomValue + bookId);
             sb.append(currentTime);
-
-        System.out.println(sb);
-        System.out.println(bookId);
         return  sb.toString();
         } else {
             return null;
@@ -277,9 +276,9 @@ public class BotService {
         return book2UserService.botDeleteBookStatus(user, bookId);
     }
 
-    public String getLinkForPayment(BotUser botUser, Double sum) {
+    public String getLinkForPayment(BotUser botUser, Double sum, long chatId) {
         if (sum > 0) {
-            return paymentService.getPaymentUrl(sum);
+            return paymentService.botGetPaymentUrl(sum, chatId, botUser.getUser());
         } else {
             return null;
         }

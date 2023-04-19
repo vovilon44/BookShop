@@ -1,7 +1,10 @@
 package com.example.MyBookShopApp.security;
 
 import com.example.MyBookShopApp.data.SearchWordDto;
-import com.example.MyBookShopApp.data.services.*;
+import com.example.MyBookShopApp.data.services.Book2UserService;
+import com.example.MyBookShopApp.data.services.CodeSenderService;
+import com.example.MyBookShopApp.data.services.PaymentService;
+import com.example.MyBookShopApp.data.services.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
@@ -13,18 +16,13 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.security.NoSuchAlgorithmException;
 
 @Controller
 public class AuthUserController
 {
     private  final  BookstoreUserRegister userRegister;
     private final CodeSenderService codeSenderService;
-
     private final SessionService sessionService;
-
-
-
     private final Book2UserService book2UserService;
     private final PaymentService paymentService;
 
@@ -124,11 +122,24 @@ public class AuthUserController
 
     }
 
+    @GetMapping("/profile/pay/failed")
+    public String handleProfileFalse()
+    {
+
+        return "redirect:/profile?result=false";
+    }
+    @GetMapping("/profile/pay/success")
+    public String handleProfileTrue()
+    {
+        return "redirect:/profile?result=true";
+    }
+
+
 
     @GetMapping("/profile")
     public String handleProfile(Model model, @RequestParam(value = "result", required = false) String result, @CookieValue(value = "token", required = false) String token)
     {
-        if (result != null && result.equals("error")){
+        if (result != null && result.equals("false")){
             model.addAttribute("paymentSumTotal", book2UserService.getSummInCart());
         }
         model.addAttribute("transactions", book2UserService.getTransactions(offset, limit, model.getAttribute("currentLocale").toString()));

@@ -38,7 +38,7 @@ public class SessionService {
     }
 
     public void sessionsHandler(BookstoreUser user, String token, String userAgentInHeader) throws UnknownHostException {
-        SessionEntity session = sessionRepository.findByToken(token);
+        SessionEntity session = sessionRepository.findFirstByToken(token);
         if (session != null && !session.getDateLastSession().equals(LocalDate.now())){
             saveCurrentSession(session);
         } else if (session == null){

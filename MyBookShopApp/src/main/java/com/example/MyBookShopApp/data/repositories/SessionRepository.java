@@ -10,7 +10,7 @@ public interface SessionRepository extends JpaRepository<SessionEntity, Integer>
 
     List<SessionEntity> findAllByUserOrderByCountDay(BookstoreUser user);
 
-    SessionEntity findByToken(String token);
+    SessionEntity findFirstByToken(String token);
     SessionEntity findSessionEntityById(Integer sessionId);
 
     List<SessionEntity> findAllByIdIn(Integer[] ids);

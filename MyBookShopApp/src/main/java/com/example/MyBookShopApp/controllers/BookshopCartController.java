@@ -87,7 +87,7 @@ public class BookshopCartController {
         if (book2UserService.payBooks()) {
             return "redirect:/books/cart";
         } else {
-            return "redirect:/profile?result=error";
+            return "redirect:/profile?result=false";
         }
 
     }

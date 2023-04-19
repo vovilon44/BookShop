@@ -248,7 +248,7 @@ public class Bot extends TelegramLongPollingBot {
         SendPhoto sendPhoto = new SendPhoto();
         sendPhoto.setChatId(chatId);
         sendPhoto.setDisableNotification(true);
-        sendPhoto.setReplyMarkup(getInlineKeyboardMarkup(botUser, book));
+        sendPhoto.setReplyMarkup(getInlineKeyboardMarkup(botUser, book, chatId));
         sendPhoto.setPhoto(new InputFile(new File(filePath + book.getBook().getImage())));
         sendPhoto.setCaption(getShortTextDescriptionBotBook(botUser, book));
 
@@ -259,7 +259,7 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
-    private ReplyKeyboard getInlineKeyboardMarkup(BotUser botUser, BotBook book) {
+    private ReplyKeyboard getInlineKeyboardMarkup(BotUser botUser, BotBook book, long chatId) {
         InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
         List<InlineKeyboardButton> rowInline = new ArrayList<>();
@@ -281,7 +281,7 @@ public class Bot extends TelegramLongPollingBot {
             case CART:
                 rowInline.add(createButton("В отложенные", BUTTON_MOVE_KEPT));
                 rowInlineSecond.add(createButton("Убрать", BUTTON_OUT));
-                rowInlineSecond.add(createButton("Купить", BUTTON_BUY, botService.getLinkForPayment(botUser, book.getCurrentPrice() - botUser.getUser().getBalance() )));
+                rowInlineSecond.add(createButton("Купить", BUTTON_BUY, botService.getLinkForPayment(botUser, book.getCurrentPrice() - botUser.getUser().getBalance(), chatId)));
                 break;
             case MY:
                 rowInline.add(createButton("В архив", BUTTON_MOVE_ARCHIVE));
@@ -332,6 +332,14 @@ public class Bot extends TelegramLongPollingBot {
             sb.append("\t\t\t\tЦена со скидкой: ").append(Math.round((book.getBook().getPrice() - book.getBook().getPrice() * book.getBook().getDiscount()) * 100) / 100);
         }
         return sb.toString();
+    }
+
+    public void sendDepositResult(String chatId){
+        try {
+            execute(new SendMessage(chatId, "Пополнение баланса прошло успешно"));
+        } catch (TelegramApiException e) {
+            logger.warning(e.getMessage());
+        }
     }
 
 }

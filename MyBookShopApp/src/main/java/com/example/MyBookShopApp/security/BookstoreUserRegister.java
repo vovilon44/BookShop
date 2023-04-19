@@ -24,8 +24,6 @@ import java.util.stream.Collectors;
 public class BookstoreUserRegister {
     private final BookstoreUserRepository bookstoreUserRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
-
     private final BookstoreUserDetailsService bookstoreUserDetailsService;
 
     private final ChangeUserRepository changeUserRepository;
@@ -36,10 +34,9 @@ public class BookstoreUserRegister {
     private final JWTUtil jwtUtil;
 
     @Autowired
-    public BookstoreUserRegister(BookstoreUserRepository bookstoreUserRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, BookstoreUserDetailsService bookstoreUserDetailsService, ChangeUserRepository changeUserRepository, BookRepository bookRepository, Book2UserHistoryRepository book2UserHistoryRepository, Book2UserRepository book2UserRepository, JWTUtil jwtUtil) {
+    public BookstoreUserRegister(BookstoreUserRepository bookstoreUserRepository, PasswordEncoder passwordEncoder, BookstoreUserDetailsService bookstoreUserDetailsService, ChangeUserRepository changeUserRepository, BookRepository bookRepository, Book2UserHistoryRepository book2UserHistoryRepository, Book2UserRepository book2UserRepository, JWTUtil jwtUtil) {
         this.bookstoreUserRepository = bookstoreUserRepository;
         this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
         this.bookstoreUserDetailsService = bookstoreUserDetailsService;
         this.changeUserRepository = changeUserRepository;
         this.bookRepository = bookRepository;
@@ -153,6 +150,17 @@ public class BookstoreUserRegister {
         BookstoreUser bookstoreUser = bookstoreUserRepository.findBookstoreUserByEmail(getCurrentUser().getEmail());
         if (bookstoreUser != null) {
             bookstoreUser.setBalance(bookstoreUser.getBalance() - value);
+            bookstoreUserRepository.save(bookstoreUser);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean correctBalanceAfterAdd(Double value, BookstoreUser user) {
+        BookstoreUser bookstoreUser = bookstoreUserRepository.findBookstoreUserByEmail(user.getEmail());
+        if (bookstoreUser != null) {
+            bookstoreUser.setBalance(bookstoreUser.getBalance() + value);
             bookstoreUserRepository.save(bookstoreUser);
             return true;
         } else {

@@ -24,25 +24,7 @@
             <h1 class="Middle-title" th:text="#{topbar.genres}">Жанры
             </h1>
             <div class="Section">
-                <div class="Tags Tags_genres">
-                    <div th:class="'Tags' + (${genre == mainGenres[0]} ? ' Tags_embed' : '')" th:each="genre : ${mainGenres}" th:if="${genre.parentId == null}">
-                        <div class="Tags-title">
-                            <div class="Tag"><a th:href="@{'/genres/' + ${genre.getSlug()}}" >[[${currentLocale == 'ru'} ? ${genre.ruName} : ${genre.enName}]]<span class="undefined-amount" th:text="'(' + ${genre.getBookCount()} + ')'">(15638)</span></a>
-                            </div>
-                        </div>
-                        <div th:class="${genreSecond.getCountChildren() > 0} ? 'Tags' : 'Tag'" th:each="genreSecond : ${mainGenres}" th:if="${genreSecond.parentId == genre.id}" >
-                            <a th:if="${genreSecond.getCountChildren() == 0}" th:href="@{'/genres/' + ${genreSecond.getSlug()}}" >[[${currentLocale == 'ru'} ? ${genreSecond.ruName} : ${genreSecond.enName}]]<span class="undefined-amount" th:text="'(' + ${genreSecond.getBookCount()} + ')'">(134)</span></a>
-                            <div class="Tags-title" th:if="${genreSecond.getCountChildren() > 0}">
-                                <div class="Tag"><a th:href="@{'/genres/' + ${genreSecond.getSlug()}}" >[[${currentLocale == 'ru'} ? ${genreSecond.ruName} : ${genreSecond.enName}]]<span class="undefined-amount" th:text="'(' + ${genreSecond.getBookCount()} + ')'">(134)</span></a></div>
-                            </div>
-                            <div class="Tag" th:each="genreThird : ${mainGenres}" th:if="${genreThird.parentId == genreSecond.id}"><a th:href="@{'/genres/' + ${genreThird.getSlug()}}" >[[${currentLocale == 'ru'} ? ${genreThird.ruName} : ${genreThird.enName}]]<span class="undefined-amount" th:text="'(' + ${genreThird.getBookCount()} + ')'">(134)</span></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="Section">
-                <div class="Tags Tags_genres" th:utext="${newGenre}">
+                <div class="Tags Tags_genres" th:utext="${mainGenres}">
                 </div>
             </div>
         </main>

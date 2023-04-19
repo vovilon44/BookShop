@@ -2,7 +2,6 @@ package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.data.services.BookService;
 import com.example.MyBookShopApp.data.services.GenresService;
-import com.example.MyBookShopApp.data.struct.genre.GenreEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 public class GenresController {
@@ -36,19 +33,14 @@ public class GenresController {
 
 
     @ModelAttribute("mainGenres")
-    public List<GenreEntity> mainGenres(){
 
-        return new ArrayList<>(genreService.getAllGenres());
+    public String mainGenres(Model model){
+        return genreService.getElementsHtml(model.getAttribute("currentLocale").toString());
     }
 
     @GetMapping("/genres")
     public String mainPage(){
         return "genres/index";
-    }
-
-    @GetMapping("/genres/old")
-    public String mainnPage(){
-        return "genres/indexOld";
     }
 
 

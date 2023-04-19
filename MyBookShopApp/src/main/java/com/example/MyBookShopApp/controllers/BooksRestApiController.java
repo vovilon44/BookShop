@@ -2,6 +2,7 @@ package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.data.*;
 import com.example.MyBookShopApp.data.services.*;
+import com.example.MyBookShopApp.data.telegram.Bot;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
 import com.example.MyBookShopApp.security.BookstoreUserRegister;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.ParseException;
-import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/api")
@@ -24,18 +24,22 @@ public class BooksRestApiController {
     private final BookService bookService;
     private final BookLike2UserService bookLike2UserService;
     private final BookReviewLikeService bookReviewLikeService;
-    private final BookstoreUserRegister bookstoreUserRegister;
+    private final BookstoreUserRegister userRegister;
     private final SessionService sessionService;
     private final Book2UserService book2UserService;
+    private final DepositService depositService;
+    private final Bot bot;
 
     @Autowired
-    public BooksRestApiController(BookService bookService, BookLike2UserService bookLike2UserService, BookReviewLikeService bookReviewLikeService, BookstoreUserRegister bookstoreUserRegister, SessionService sessionService, Book2UserService book2UserService) {
+    public BooksRestApiController(BookService bookService, BookLike2UserService bookLike2UserService, BookReviewLikeService bookReviewLikeService, BookstoreUserRegister userRegister, SessionService sessionService, Book2UserService book2UserService, DepositService depositService, Bot bot) {
         this.bookService = bookService;
         this.bookLike2UserService = bookLike2UserService;
         this.bookReviewLikeService = bookReviewLikeService;
-        this.bookstoreUserRegister = bookstoreUserRegister;
+        this.userRegister = userRegister;
         this.sessionService = sessionService;
         this.book2UserService = book2UserService;
+        this.depositService = depositService;
+        this.bot = bot;
     }
 
     @GetMapping("/books/recommended")
@@ -291,6 +295,26 @@ public class BooksRestApiController {
     public ResponseEntity<ApiResponse> removeAllSessions(Integer[] ids)
     {
         return ResponseEntity.ok(new ApiResponse<>(HttpStatus.ACCEPTED, "", sessionService.removeAllSessions(ids)));
+    }
+
+    @GetMapping("/pay/result")
+    @ResponseBody
+    public ResponseEntity<String> handleProfileResult(@RequestParam(value = "SignatureValue", required = false) String signature,
+                                      @RequestParam(value = "OutSum", required = false) Double sum,
+                                      @RequestParam(value = "shp_bot_chat", required = false) String chatId)
+    {
+        DepositTransactionEntity transaction = new DepositTransactionEntity();
+        if (signature != null && sum != null){
+            transaction = depositService.checkDepositTransaction(signature);
+            if (transaction != null) {
+                userRegister.correctBalanceAfterAdd(sum, transaction.getUser());
+                if (chatId != null){
+                    bot.sendDepositResult(chatId);
+                }
+            }
+
+        }
+        return ResponseEntity.ok("OK" + transaction.getInvId());
     }
 
 
