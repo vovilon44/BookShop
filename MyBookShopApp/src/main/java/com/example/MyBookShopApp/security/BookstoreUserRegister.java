@@ -9,10 +9,11 @@ import com.example.MyBookShopApp.data.struct.book.links.Book2UserEntity;
 import com.example.MyBookShopApp.data.struct.book.links.Book2UserHistory;
 import com.example.MyBookShopApp.security.jwt.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -44,8 +45,7 @@ public class BookstoreUserRegister {
         this.book2UserRepository = book2UserRepository;
         this.jwtUtil = jwtUtil;
     }
-
-
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public BookstoreUserDetails registerNewUser(RegistrationForm registrationForm, String cartContents, String keptContents, String historyVisit) {
         BookstoreUser userByEmail = bookstoreUserRepository.findBookstoreUserByEmail(registrationForm.getEmail());
         BookstoreUser userByPhone = bookstoreUserRepository.findBookstoreUserByPhone(registrationForm.getPhone());
@@ -144,7 +144,6 @@ public class BookstoreUserRegister {
             return 0.0;
         }
     }
-
 
     public boolean correctBalanceAfterPay(Double value) {
         BookstoreUser bookstoreUser = bookstoreUserRepository.findBookstoreUserByEmail(getCurrentUser().getEmail());

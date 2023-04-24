@@ -11,8 +11,9 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.net.UnknownHostException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,11 +34,8 @@ public class SessionService {
         this.blackListRepository = blackListRepository;
     }
 
-    public void newSession(BookstoreUser user, String token) {
-        sessionRepository.save(new SessionEntity(user, token));
-    }
 
-    public void sessionsHandler(BookstoreUser user, String token, String userAgentInHeader) throws UnknownHostException {
+    public void sessionsHandler(BookstoreUser user, String token, String userAgentInHeader) {
         SessionEntity session = sessionRepository.findFirstByToken(token);
         if (session != null && !session.getDateLastSession().equals(LocalDate.now())){
             saveCurrentSession(session);
@@ -109,7 +107,7 @@ public class SessionService {
         }
     }
 
-
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public Boolean removeAllSessions(Integer[] ids) {
         List<SessionEntity> sessions = sessionRepository.findAllByIdIn(ids);
             for (SessionEntity session : sessions){

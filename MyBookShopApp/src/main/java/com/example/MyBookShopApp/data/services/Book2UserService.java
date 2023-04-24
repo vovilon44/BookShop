@@ -8,9 +8,7 @@ import com.example.MyBookShopApp.data.repositories.Book2UserRepository;
 import com.example.MyBookShopApp.data.repositories.TransactionRepository;
 import com.example.MyBookShopApp.data.struct.book.links.Book2UserEntity;
 import com.example.MyBookShopApp.data.telegram.BotBooksResponse;
-import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
 import com.example.MyBookShopApp.security.BookstoreUser;
-import com.example.MyBookShopApp.security.BookstoreUserDetailsService;
 import com.example.MyBookShopApp.security.BookstoreUserRegister;
 import com.example.MyBookShopApp.security.BookstoreUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,29 +30,24 @@ import java.util.StringJoiner;
 public class Book2UserService {
     private final Book2UserRepository book2UserRepository;
 
-    private BookService bookService;
-
-    private final PaymentService paymentService;
+    private final BookService bookService;
 
     private final BookstoreUserRegister userRegister;
-
-    private final BookstoreUserDetailsService userDetailsService;
 
     private final TransactionRepository transactionRepository;
     private final BookstoreUserRepository bookstoreUserRepository;
 
     @Autowired
-    public Book2UserService(Book2UserRepository book2UserRepository, BookService bookService, PaymentService paymentService, BookstoreUserRegister userRegister, BookstoreUserDetailsService userDetailsService, TransactionRepository transactionRepository, BookstoreUserRepository bookstoreUserRepository) {
+    public Book2UserService(Book2UserRepository book2UserRepository, BookService bookService, BookstoreUserRegister userRegister, TransactionRepository transactionRepository, BookstoreUserRepository bookstoreUserRepository) {
         this.book2UserRepository = book2UserRepository;
         this.bookService = bookService;
-        this.paymentService = paymentService;
         this.userRegister = userRegister;
-        this.userDetailsService = userDetailsService;
         this.transactionRepository = transactionRepository;
         this.bookstoreUserRepository = bookstoreUserRepository;
     }
 
-    public boolean addBook2User(List<String> slugs, String status) throws BookstoreApiWrongParameterException {
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public boolean addBook2User(List<String> slugs, String status) {
         List<Book> books = bookService.getBooksInSlugs(slugs);
         if (slugs.size() == books.size()) {
             List<Book2UserEntity> book2UserList = book2UserRepository.findBook2UserEntityByBook_SlugInAndUser_Email(slugs, userRegister.getCurrentUser().getEmail());
@@ -113,7 +108,7 @@ public class Book2UserService {
     }
 
 
-    public Book2UserEntity getBook2User(String slug) throws BookstoreApiWrongParameterException {
+    public Book2UserEntity getBook2User(String slug){
         return book2UserRepository.findBook2UserEntitiesByBook_SlugAndUser(slug, userRegister.getCurrentUser());
     }
 
@@ -149,6 +144,7 @@ public class Book2UserService {
     }
 
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public boolean payBooks() {
         List<Book> books = bookService.getBooksInCart(2);
         if (books != null) {
@@ -220,6 +216,7 @@ public class Book2UserService {
         }
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public BotBooksResponse botChangeStatusBookForUser(BookstoreUser user, Integer bookId, Integer bookTypeId) {
         Book2UserEntity book2User = book2UserRepository.findBook2UserEntitiesByBookIdAndUser(bookId, user);
         if (book2User != null && !(bookTypeId == 3 && book2User.getTypeId() == 2)){

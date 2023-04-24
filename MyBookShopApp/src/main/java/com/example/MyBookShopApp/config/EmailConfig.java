@@ -16,13 +16,15 @@ public class EmailConfig
 
     @Value("${appEmail.password}")
     private String password;
+    @Value("${appEmail.port}")
+    private int port;
 
     @Bean
     public JavaMailSender getJavaMailSender()
     {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.mail.ru");
-        mailSender.setPort(465);
+        mailSender.setPort(port);
         mailSender.setUsername(email);
         mailSender.setPassword(password);
         Properties props = mailSender.getJavaMailProperties();
