@@ -89,7 +89,7 @@ public class BookRepositoryJDBC {
 //        Integer count = jdbcTemplate.queryForObject(RECOMENDED_NOT_AUTHORIZED_SQL_STRING_COUNT, new HashMap<>(), Integer.class);
         return jdbcTemplate.query(RECOMENDED_NOT_AUTHORIZED_SQL_STRING,
                 Map.of("slugs", slugs.get(0), "slugsMy", slugs.get(1), "offset", offset * limit, "limit", limit),
-                (ResultSet rs, int rowNum) -> getBooksResult(false, rs));
+                (ResultSet rs, int rowNum) -> getBooksResult(rs));
     }
 
 
@@ -97,7 +97,7 @@ public class BookRepositoryJDBC {
 //        Integer count = jdbcTemplate.queryForObject(RECOMENDED_AUTHORIZED_SQL_STRING_COUNT, Map.of("userId", userRegister.getCurrentUser().getId()), Integer.class);
         return jdbcTemplate.query(RECOMENDED_AUTHORIZED_SQL_STRING,
                 Map.of("userId", userId, "offset", offset * limit, "limit", limit),
-                (ResultSet rs, int rowNum) -> getBooksResult(false, rs));
+                (ResultSet rs, int rowNum) -> getBooksResult(rs));
     }
 
     public BotBooksResponse getBotSearchBooksByGenre(BotUser botUser, Integer limit){
@@ -191,7 +191,7 @@ public class BookRepositoryJDBC {
     }
 
 
-    private Book getBooksResult(boolean with_Rating, ResultSet rs) throws SQLException {
+    private Book getBooksResult(ResultSet rs) throws SQLException {
         Book book = new Book();
         book.setId(rs.getInt("id"));
         book.setPubDate(rs.getDate("pub_date"));
@@ -203,6 +203,7 @@ public class BookRepositoryJDBC {
         book.setPrice(rs.getInt("price"));
         book.setDiscount(rs.getDouble("discount"));
         String authors = rs.getString("authors");
+        Integer count = rs.getInt("count");
         if (authors != null) {
             book.setAuthors(rs.getInt("count") > 1 ? authors + " и другие" : authors);
         } else {

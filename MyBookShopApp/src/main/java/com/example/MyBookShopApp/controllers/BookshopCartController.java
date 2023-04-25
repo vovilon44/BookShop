@@ -38,7 +38,7 @@ public class BookshopCartController {
     public String handleKeptRequest(@CookieValue(value = "keptContents", required = false) String keptContents,
                                     @CookieValue(value = "token", required = false) String token, Model model) {
         if (token != null){
-            List<Book> books = bookService.getBooksInCart(1);
+            List<Book> books = bookService.getBooksInMyType(1);
             if (books == null){
                 model.addAttribute("isKeptEmpty", true);
             } else {
@@ -61,7 +61,7 @@ public class BookshopCartController {
     public String handleCartRequest(@CookieValue(value = "cartContents", required = false) String cartContents,
                                     @CookieValue(value = "token", required = false) String token, Model model) {
         if (token != null){
-            List<Book> books = bookService.getBooksInCart(2);
+            List<Book> books = bookService.getBooksInMyType(2);
             if (books == null || books.size() == 0){
                 model.addAttribute("isCartEmpty", true);
             } else {

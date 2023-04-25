@@ -50,16 +50,7 @@ public class Book {
 
 
 
-//    @JsonGetter("authors")
-//    public String getAuthors(){
-//        List<String> authors = book2AuthorEntityList.stream().map(e->e.authorsFullName()).collect(Collectors.toList());
-//        if (authors.size() > 1){
-//            return authors.get(0) + " и другие";
-//        } else if (authors.size() == 1){
-//            return authors.get(0);
-//        }
-//        return "Автор неизвестен";
-//    }
+
 
     @JsonGetter("status")
     public String getStatus() {
@@ -341,7 +332,7 @@ public class Book {
         if (authorsList.size() > 0) {
             return authorsList.get(0) + (authorsList.size() > 1 ? " и другие" : "");
         } else if (authors != null) {
-            return authors + " и другие";
+            return authors;
         } else {
             return "Автор неизвестен";
         }

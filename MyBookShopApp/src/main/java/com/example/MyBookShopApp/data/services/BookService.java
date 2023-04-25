@@ -53,7 +53,6 @@ public class BookService {
     }
 
 
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
     public BooksPageDto getPageOfRecommendedBooksNotAuthorized(Integer offset, Integer limit, String cartContents, String keptContents, String historyVisit){
         List<Set<String>> slugs =  getSlugsBooksInKeptCartHistoryNotAuthorized(cartContents, keptContents, historyVisit);
         List<Book> books = bookRepositoryJDBC.getPageOfRecommendedBooksNotAuthorized(offset, limit, slugs);
@@ -61,8 +60,6 @@ public class BookService {
     }
 
 
-
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
     public BooksPageDto getPageOfRecommendedBooksAuthorized(Integer offset, Integer limit){
 
         List<Book> books = bookRepositoryJDBC.getPageOfRecommendedBooksAuthorized(userRegister.getCurrentUser().getId(), offset, limit);
@@ -71,7 +68,6 @@ public class BookService {
 
 
 
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
     public BooksPageDto getListOfPopularBooksAuthorized(Integer offset, Integer limit)
     {
         Pageable nextPage = PageRequest.of(offset,limit);
@@ -79,7 +75,7 @@ public class BookService {
         return getBooksPageDtoAuthorized(pageBooks.getContent(), offset, limit, (int) pageBooks.getTotalElements());
 
     }
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
+
     public BooksPageDto getListOfPopularBooksNotAuthorized(Integer offset, Integer limit, String cartContents, String keptContents) {
         Pageable nextPage = PageRequest.of(offset, limit);
         Page<Book> pageBooks = bookRepository.getListOfPopularBooksNotAuthorized(getSlugsBooksInKeptCartHistoryNotAuthorized(cartContents, keptContents, null).get(1), nextPage);
@@ -87,23 +83,22 @@ public class BookService {
     }
 
 
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
     public BooksPageDto getListOfRecentBooksAuthorized(Integer offset, Integer limit, String from, String to) throws ParseException {
         DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
         Pageable nextPage = PageRequest.of(offset,limit);
         Page books;
         if (from != null && to != null){
             books = bookRepository.findBooksByPubDateBetweenOrderByPubDateDescCustom(df.parse(from), df.parse(to), userRegister.getCurrentUser().getId(), nextPage);
-        } else if (from != null){
-            books =  bookRepository.findBooksByPubDateBeforeOrderByPubDateDescCustom(df.parse(to), userRegister.getCurrentUser().getId(), nextPage);
         } else if (to != null){
+            books =  bookRepository.findBooksByPubDateBeforeOrderByPubDateDescCustom(df.parse(to), userRegister.getCurrentUser().getId(), nextPage);
+        } else if (from != null){
             books =  bookRepository.findBooksByPubDateAfterOrderByPubDateDescCustom(df.parse(from), userRegister.getCurrentUser().getId(), nextPage);
         } else {
             books =  bookRepository.findByOrderByPubDateDescCustom(userRegister.getCurrentUser().getId(), nextPage);
         }
         return getBooksPageDtoAuthorized(books.getContent(), offset, limit, (int) books.getTotalElements());
     }
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
+
     public BooksPageDto getListOfRecentBooksNotAuthorized(Integer offset, Integer limit, String from, String to, String cartContents, String keptContents) throws ParseException {
         DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
         Pageable nextPage = PageRequest.of(offset,limit);
@@ -124,26 +119,24 @@ public class BookService {
 
 
 
-
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
     public BooksPageDto getBookFromGenreAuthorized(String slugGenre, Integer offset, Integer limit){
         Pageable nextPage = PageRequest.of(offset,limit);
         Page bookPage = bookRepository.findBooksByBook2GenreEntityList_Genre_SlugIsCustom(slugGenre, userRegister.getCurrentUser().getId(), nextPage);
         return getBooksPageDtoAuthorized(bookPage.getContent(), offset, limit, (int) bookPage.getTotalElements());
     }
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
+
     public BooksPageDto getBookFromGenreNotAuthorized(String slugGenre, Integer offset, Integer limit, String cartContents, String keptContents){
         Pageable nextPage = PageRequest.of(offset,limit);
         Page bookPage = bookRepository.findDistinctByBook2GenreEntityList_Genre_SlugIsAndSlugNotInOrderByPubDate(slugGenre, getSlugsBooksInKeptCartHistoryNotAuthorized(cartContents, keptContents, null).get(1), nextPage);
         return getBooksPageDtoNotAuthorized(bookPage.getContent(), offset, limit, (int) bookPage.getTotalElements(), cartContents, keptContents);
     }
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
+
     public BooksPageDto getBooksFromAuthorAuthorized(String slugAuthor, Integer offset, Integer limit){
         Pageable nextPage = PageRequest.of(offset,limit);
         Page<Book> bookPage =  bookRepository.findAllByBook2AuthorEntityList_Author_SlugIs(slugAuthor, nextPage);
         return getBooksPageDtoAuthorized(bookPage.getContent(), offset, limit, (int) bookPage.getTotalElements());
     }
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
+
     public BooksPageDto getBooksFromAuthorNotAuthorized(String slugAuthor, Integer offset, Integer limit, String cartContents, String keptContents){
         Pageable nextPage = PageRequest.of(offset,limit);
         Page<Book> bookPage =  bookRepository.findAllByBook2AuthorEntityList_Author_SlugIs(slugAuthor, nextPage);
@@ -151,7 +144,6 @@ public class BookService {
     }
 
 
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
     public Book getBookFromSlug(String slugBook) throws BookstoreApiWrongParameterException {
 
         if (slugBook.equals("") || slugBook.length() <= 1 ){
@@ -165,7 +157,7 @@ public class BookService {
             }
         }
     }
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
+
     public BooksPageDto getBookFromTagNotAuthorized(String slugTag, Integer offset, Integer limit, String cartContents, String keptContents) throws BookstoreApiWrongParameterException {
         if (slugTag.equals("") || slugTag.length() <= 1 || offset == null || limit == null){
             throw new BookstoreApiWrongParameterException("Wrong values passed to one or more parameters");
@@ -223,7 +215,7 @@ public class BookService {
             }
         }
     }
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
+
     public void saveFile(MultipartFile file, String slug) throws IOException, BookstoreApiWrongParameterException {
         String savePath = storage.saveNewBookImage(file, slug);
         Book bookToUpdate = getBookFromSlug(slug);
@@ -232,12 +224,7 @@ public class BookService {
     }
 
 
-//    public List<Book> getBooksBySearch()
-//    {
-//        return bookRepository.findAllByIdBetween(0, 10);
-//    }
 
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
     public byte[] getBookFile(String hash) throws IOException {
         Path path = storage.getBookFilePath(hash);
         MediaType mediaType = storage.getBookFileMime(hash);
@@ -245,18 +232,16 @@ public class BookService {
         return data;
     }
 
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
     public Path getPathFile(String hash) {
         return storage.getBookFilePath(hash);
     }
 
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
+
     public MediaType getBookFileMime(String hash) {
         return storage.getBookFileMime(hash);
     }
 
 
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
     public ApiResponse<BooksPageDto> getResponseBooks(BooksPageDto booksPageDto){
         ApiResponse<BooksPageDto> response = new ApiResponse<>();
         response.setDebugMessage("successful request");
@@ -276,7 +261,7 @@ public class BookService {
         response.setData(transactionsDto);
         return response;
     }
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
+
     public List<Book> getBooksInSlugs(List<String> slugs){
         if (slugs != null && slugs.size() > 0) {
             return bookRepository.findBooksBySlugIn(slugs);
@@ -284,58 +269,14 @@ public class BookService {
             return new ArrayList<>();
         }
     }
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
-    public List<Book> getBooksInCart(Integer type){
+
+    public List<Book> getBooksInMyType(Integer type){
         Pageable page = Pageable.unpaged();
         return bookRepository.findBooksByBook2UserEntityList_TypeIdAndBook2UserEntityList_User_Email(type, userRegister.getCurrentUser().getEmail(), page).getContent();
     }
 
 
 
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
-//    public BooksPageDto getPageOfGoogleBooksApiSearchResult(String searchWord,Integer offset, Integer limit)
-//    {
-//        RestTemplate restTemplate = new RestTemplate();
-//        String REQUEST_URL = "https://www.googleapis.com/books/v1/volumes" +
-//                "?q=" + searchWord +
-//                "&key =" + apiKey +
-//                "&filter=paid-ebooks" +
-//                "&startIndex=" + offset * limit +
-//                "&maxResults=" + limit;
-//        Root root = restTemplate.getForEntity(REQUEST_URL, Root.class).getBody();
-//        ArrayList<Book> list = new ArrayList<>();
-//        if (root != null){
-//            for (Item item : root.getItems()){
-//                Book book = new Book();
-//                if (item.getVolumeInfo() != null && item.getSaleInfo().getSaleability().equals("FOR_SALE")){
-//                    if (item.getVolumeInfo().getAuthors() != null) {
-//                        book.setBook2AuthorEntityList(item.getVolumeInfo().getAuthors().stream().map(e -> {
-//                            Book2AuthorEntity book2AuthorEntity = new Book2AuthorEntity();
-//                            Author author = new Author();
-//                            author.setName(e);
-//                            book2AuthorEntity.setBook(book);
-//                            book2AuthorEntity.setAuthor(author);
-//                            return book2AuthorEntity;
-//                        }).collect(Collectors.toList()));
-//                    }
-//                    book.setTitle(item.getVolumeInfo().getTitle());
-//                    book.setImage(item.getVolumeInfo().getImageLinks().getThumbnail());
-//
-//                }
-//                if (item.getSaleInfo() != null && item.getSaleInfo().getSaleability().equals("FOR_SALE"))
-//                {
-//                    book.setPrice(item.getSaleInfo().getListPrice().getAmount());
-//                    book.setDiscount(1 - (item.getSaleInfo().getRetailPrice().getAmount() / item.getSaleInfo().getListPrice().getAmount()));
-//                }
-//                if (item.getSaleInfo().getSaleability().equals("FOR_SALE")) {
-//                    list.add(book);
-//                }
-//            }
-//
-//        }
-//        return getBooksPageDtoNotAuthorized(list, offset, limit, list.size(), null, null);
-//    }
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
     public boolean checkBookPresence(String slug)
     {
         if (bookRepository.findBookBySlug(slug) != null){
@@ -344,7 +285,7 @@ public class BookService {
             return false;
         }
     }
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
+
     public String getCookieForRatingBook(String booksRating, String slug, Integer value)
     {
         if (booksRating == null || booksRating.equals("")) {
@@ -365,28 +306,26 @@ public class BookService {
             return stringJoiner.toString();
         }
     }
-    //-------------------------------------------------------------------------YEA----------------------------------------------------------------
 
 
-    //-----------------------------------------------------------------YEA---------------------------------------------------------------------------------------------
     public BooksPageDto getMyBooks(int offset, int limit) {
         Pageable nextPage = PageRequest.of(offset,limit);
-        Page<Book> bookPage =  bookRepository.findBooksByBook2UserEntityList_TypeIdInAndBook2UserEntityList_User_Email(List.of(3), userRegister.getCurrentUser().getEmail(), nextPage);
+        Page<Book> bookPage =  bookRepository.findBooksByBook2UserEntityList_TypeIdAndBook2UserEntityList_User_Email(3, userRegister.getCurrentUser().getEmail(), nextPage);
         return getBooksPageDtoAuthorized(bookPage.getContent(), offset, limit, (int) bookPage.getTotalElements());
     }
-    //-----------------------------------------------------------------YEA---------------------------------------------------------------------------------------------
+
     public BooksPageDto getMyBooksInArchive(int offset, int limit) {
         Pageable nextPage = PageRequest.of(offset,limit);
         Page<Book> bookPage = bookRepository.findBooksByBook2UserEntityList_TypeIdAndBook2UserEntityList_User_Email(4, userRegister.getCurrentUser().getEmail(), nextPage);
         return getBooksPageDtoAuthorized(bookPage.getContent(), offset, limit, (int) bookPage.getTotalElements());
     }
-    //-----------------------------------------------------------------YEA---------------------------------------------------------------------------------------------
+
     public BooksPageDto getMyHistoryBooks(int offset, int limit) {
         Pageable nextPage = PageRequest.of(offset,limit);
         Page<Book> bookPage = bookRepository.findBooksByBook2UserHistoryList_User_EmailOrderByBook2UserHistoryList_Time(userRegister.getCurrentUser().getEmail(), nextPage);
         return getBooksPageDtoAuthorized(bookPage.getContent(), offset, limit, (int) bookPage.getTotalElements());
     }
-    //-----------------------------------------------------------------YEA---------------------------------------------------------------------------------------------
+
     private BooksPageDto getBooksPageDtoNotAuthorized(List<Book> books, Integer offset, Integer limit, Integer count, String cartContents, String keptContents){
         books.forEach(e -> {
             if (cartContents != null && cartContents.contains(e.getSlug())) {
@@ -399,12 +338,12 @@ public class BookService {
         });
         return new BooksPageDto(books, offset * limit + books.size()  >= count, count);
     }
-    //-----------------------------------------------------------------YEA---------------------------------------------------------------------------------------------
+
     private BooksPageDto getBooksPageDtoAuthorized(List<Book> books, Integer offset, Integer limit, Integer count){
         books.forEach(e->e.setUser(userRegister.getCurrentUser()));
         return new BooksPageDto(books, offset * limit + books.size()  >= count, count);
     }
-    //-----------------------------------------------------------------YEA---------------------------------------------------------------------------------------------
+
     private List<Set<String>> getSlugsBooksInKeptCartHistoryNotAuthorized(String cartContents, String keptContents, String historyVisit) {
         List<Set<String>> slugs = new ArrayList<>();
         slugs.add(new HashSet<>());

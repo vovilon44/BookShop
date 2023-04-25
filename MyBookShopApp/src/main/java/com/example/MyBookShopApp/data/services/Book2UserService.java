@@ -146,7 +146,7 @@ public class Book2UserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public boolean payBooks() {
-        List<Book> books = bookService.getBooksInCart(2);
+        List<Book> books = bookService.getBooksInMyType(2);
         if (books != null) {
             Double paymentSumTotal = books.stream().mapToDouble(e -> e.getPrice() - (e.getPrice() * e.getDiscount())).sum();
             if (paymentSumTotal <= userRegister.getBalance()) {
